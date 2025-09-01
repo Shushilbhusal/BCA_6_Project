@@ -1,6 +1,7 @@
 import type { Request, Response} from 'express';
-import { User } from '../../model/userService/userSchema.js';
-import { comparePassword, generateToken } from '../../utils/auth.js';
+import { User } from '../model/userService/userSchema.js';
+import { comparePassword, generateToken } from '../utils/auth.js';
+
 
 export const loginHandler = async (req: Request, res: Response)=>{
     try{

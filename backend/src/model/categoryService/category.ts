@@ -6,6 +6,7 @@ export const addCategory = async (input: {
   imageUrl: string;
 }) => {
   try {
+  
     const addCategory = await Category.create(input);
     return addCategory;
   } catch (error) {
@@ -34,6 +35,7 @@ export const getCategoryById = async (id: string) => {
 export const getCategoryByName = async (name: string) => {
   try {
     const category = await Category.findOne({ categoryName: name });
+    console.log(category);
     return category;
   } catch (error) {
     console.log("error while getting category by name", error);

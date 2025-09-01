@@ -1,7 +1,7 @@
 import type { Request, Response } from "express";
-import { createUserService } from "../../model/userService/user.js";
-import { hashPassword } from "../../utils/auth.js";
-import { Role } from "../../model/userService/userSchema.js";
+import { createUserService } from "../model/userService/user.js";
+import { hashPassword } from "../utils/auth.js";
+import { Role } from "../model/userService/userSchema.js";
 export const createUserHandler = async (req: Request, res: Response) => {
   try {
     const { name, email, address, password, role } = req.body;
@@ -10,9 +10,9 @@ export const createUserHandler = async (req: Request, res: Response) => {
       res.status(400).json({ message: "fields are required" });
     }
     const hashedPassword = await hashPassword(password);
-    if(!hashedPassword || hashedPassword === undefined){
-      res.status(400).json({message:"password not hashed"});
-      return 
+    if (!hashedPassword || hashedPassword === undefined) {
+      res.status(400).json({ message: "password not hashed" });
+      return;
     }
     const createdUser = await createUserService({
       name,

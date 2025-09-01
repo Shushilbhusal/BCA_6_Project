@@ -1,12 +1,12 @@
 import express from "express";
-import type { Request, Response } from "express";
 import cors from 'cors';
 import connectDB from "./db/connection.js";
 import dotenv from 'dotenv';
 import { userRouter } from "./router/userRouter.js";
-import { v2 as cloudinary } from "cloudinary";
-import multer from "multer";
+
 import { categoryRouter } from "./router/categoryRouter.js";
+import { supplierRouter } from "./router/supplierRouter.js";
+import { productRouter } from "./router/productRouter.js";
 dotenv.config();
 
 const app = express();
@@ -20,6 +20,8 @@ app.use(express.json());
 
 app.use('/user', userRouter);
 app.use('/category', categoryRouter);
+app.use('/supplier', supplierRouter);
+app.use('/product', productRouter);
 
 const PORT = process.env.PORT || 3000;
 

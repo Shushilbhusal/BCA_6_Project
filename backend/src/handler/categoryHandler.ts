@@ -6,8 +6,8 @@ import {
   getCategoryById,
   getCategoryByName,
   updateCategoryById,
-} from "../../model/categoryService/category.js";
-import { uploadToCloudinary } from "../../utils/uploadTocloudinary.js";
+} from "../model/categoryService/category.js";
+import { uploadToCloudinary } from "../utils/uploadTocloudinary.js";
 
 export const createCategoryHandler = async (req: Request, res: Response) => {
   const { categoryName, categoryDescription } = req.body;

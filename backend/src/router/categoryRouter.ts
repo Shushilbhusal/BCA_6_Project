@@ -5,7 +5,7 @@ import {
   deleteCategoryHandler,
   getCategoryHandler,
   updateCategoryHandler,
-} from "../handler/user/categoryHandler.js";
+} from "../handler/categoryHandler.js";
 import { authMiddleware } from "../middleware/authMiddleware.js";
 
 const categoryRouter = Router();
@@ -18,6 +18,11 @@ categoryRouter.post(
 );
 categoryRouter.get("/get", authMiddleware, getCategoryHandler);
 categoryRouter.delete("/delete/:id", authMiddleware, deleteCategoryHandler);
-categoryRouter.put("/update/:id", authMiddleware, upload.single("image"), updateCategoryHandler);
+categoryRouter.put(
+  "/update/:id",
+  authMiddleware,
+  upload.single("image"),
+  updateCategoryHandler
+);
 
 export { categoryRouter };
