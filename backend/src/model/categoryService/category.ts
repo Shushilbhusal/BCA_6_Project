@@ -6,7 +6,6 @@ export const addCategory = async (input: {
   imageUrl: string;
 }) => {
   try {
-  
     const addCategory = await Category.create(input);
     return addCategory;
   } catch (error) {
@@ -16,7 +15,7 @@ export const addCategory = async (input: {
 
 export const getAllCategories = async () => {
   try {
-    const categories = await Category.find({}).lean().exec();
+    const categories = await Category.find({});
     return categories;
   } catch (error) {
     console.log("error while getting all categories", error);
@@ -34,13 +33,19 @@ export const getCategoryById = async (id: string) => {
 
 export const getCategoryByName = async (name: string) => {
   try {
-    const category = await Category.findOne({ categoryName: name });
-    console.log(category);
+    const category = await Category.findOne({
+      categoryName: { $regex: new RegExp(`^${name}$`, "i") } 
+    })
+      .lean()
+      .exec();
+
     return category;
   } catch (error) {
-    console.log("error while getting category by name", error);
+    console.error("Error while getting category", error);
+    throw error;
   }
 };
+
 
 export const deleteCategoryById = async (id: string) => {
   try {

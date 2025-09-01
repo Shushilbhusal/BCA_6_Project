@@ -4,13 +4,16 @@ import { Outlet } from 'react-router'
 
 function Dashboard() {
   return (
-    <div className='flex'>
-        <div className='w-1/4'>
-            <Sidebar/>
-        </div>
-        <div className='w-3/4 bg-amber-100 h-screen'>
-            <Outlet />
-        </div>
+    <div className="flex flex-col md:flex-row min-h-screen">
+      {/* Sidebar */}
+      <div className="w-full md:w-1/4 shadow-md">
+        <Sidebar />
+      </div>
+
+      {/* Main Content */}
+      <div className="w-full md:w-3/4 bg min-h-screen ">
+        <Outlet />
+      </div>
     </div>
   )
 }

@@ -26,10 +26,26 @@ const supplierServiceModel = {
     }
   },
 
+  // getSupplier by name
+getSupplierByName: async (name: string) => {
+  try {
+    const supplier = await Supplier.findOne({
+      supplierName: { $regex: new RegExp(`^${name}$`, "i") }
+    }).lean().exec();
+
+    return supplier;
+  } catch (error) {
+    console.error("Error while getting supplier", error);
+    throw error;
+  }
+}
+,
+
+
   // Get all suppliers
   getSupplier: async () => {
     try {
-      const suppliers = await Supplier.find({}).lean().exec();
+      const suppliers = await Supplier.find({}).getFilter();
       return suppliers;
     } catch (error) {
       console.error("Error while getting suppliers", error);

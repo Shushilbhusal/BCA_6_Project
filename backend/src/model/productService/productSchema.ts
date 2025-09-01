@@ -6,12 +6,12 @@ const productSchema = new mongoose.Schema({
     required: true,
     trim: true
   },
-  category: {
+  categoryId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Category",   // Reference to Category model
     required: true
   },
-  supplier: {
+  supplierId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Supplier",   // Reference to Supplier model
     required: true
@@ -26,15 +26,23 @@ const productSchema = new mongoose.Schema({
     required: true,
     min: 0
   },
+  image: {
+    type: String,
+    trim: true
+  },
   description: {
     type: String,
     trim: true
   },
-  status: {
+  categoryName: {
     type: String,
-    enum: ["available", "out-of-stock", "discontinued"],
-    default: "available"
+    required: false
+  },
+  supplierName: {
+    type: String,
+    required: false
   }
+
 }, { timestamps: true });
 
 const Product = mongoose.model("Product", productSchema);

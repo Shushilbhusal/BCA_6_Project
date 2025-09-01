@@ -1,7 +1,8 @@
 import axios from "axios";
 import React, { useState, useRef, useEffect } from "react";
+import { FiSearch } from "react-icons/fi";
 
-type Category = {
+export type Category = {
   _id: string;
   categoryName: string;
   categoryDescription: string;
@@ -14,6 +15,8 @@ function Categories() {
   const [imageUrl, setImageUrl] = useState<File | null | string>(null);
   const [loading, setLoading] = useState(false);
   const [categories, setCategories] = useState<Category[]>([]);
+
+  const [searchTerm, setSearchTerm] = useState("");
 
   // Changed to hold the entire category object instead of just ID
   const [editCategory, setEditCategory] = useState<Category | null>(null);
@@ -60,6 +63,7 @@ function Categories() {
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
+            "Content-Type": "multipart/form-data",
           },
         }
       );
@@ -194,21 +198,36 @@ function Categories() {
       </div>
     );
 
+  // filter categories
+  const filteredCategories = categories.filter((category) =>
+    category.categoryName.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
   return (
     <div className="p-6 bg-gray-50 min-h-screen">
       <h1 className="text-3xl font-bold text-indigo-800 mb-8 text-center">
         Category Management
-      </h1>
+       </h1>
+      <div className="relative mb-6  mr-5  flex flex-row-reverse">
+         <div className="relative">
+                <FiSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+                <input
+                  type="text"
+                  placeholder="Search categories..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="w-full sm:w-64 pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                />
+              </div>
+      </div>
 
       <div className="flex flex-col lg:flex-row gap-6">
-        {/* Form Section - Left Side */}
         <div className="w-full lg:w-2/5">
           <div className="bg-white p-6 rounded-xl shadow-md border border-gray-200">
             <h2 className="text-xl font-semibold text-gray-800 mb-6 text-center">
               {editCategory ? "Update Category" : "Add New Category"}
             </h2>
 
-            {/* FIX: Use different form handler based on mode */}
             <form
               onSubmit={editCategory ? handleSaveUpdate : handleSubmit}
               className="space-y-5"
@@ -289,7 +308,6 @@ function Categories() {
                       Loading...
                     </span>
                   ) : (
-                    // FIX: Simplified button text - removed the broken onClick
                     <span>
                       {editCategory ? "Save Changes" : "Add Category"}
                     </span>
@@ -318,9 +336,11 @@ function Categories() {
               Existing Categories
             </h2>
 
-            {categories.length === 0 ? (
+            {filteredCategories.length === 0 ? (
               <div className="text-center py-8 text-gray-500">
-                No categories found. Add your first category using the form.
+                {categories.length === 0
+                  ? "No categories found. Add your first category using the form."
+                  : "No categories match your search."}
               </div>
             ) : (
               <div className="overflow-x-auto">
@@ -345,27 +365,26 @@ function Categories() {
                     </tr>
                   </thead>
                   <tbody className="bg-white divide-y divide-gray-200">
-                    {categories.map((category) => (
+                    {filteredCategories.map((category, index) => (
                       <tr
                         key={category._id}
                         className="hover:bg-gray-50 transition-colors duration-150"
                       >
                         <td className="px-4 py-3 whitespace-nowrap text-sm font-medium text-gray-900">
-                          {categories.indexOf(category) + 1}
+                          {index + 1}
                         </td>
                         <td className="px-4 py-3 whitespace-nowrap text-sm font-medium text-gray-900">
-                          {category.categoryName || category.categoryName}
+                          {category.categoryName}
                         </td>
                         <td className="px-4 py-3 text-sm text-gray-600 max-w-xs">
                           <div className="line-clamp-2">
-                            {category.categoryDescription ||
-                              category.categoryDescription}
+                            {category.categoryDescription}
                           </div>
                         </td>
                         <td className="px-4 py-3 whitespace-nowrap">
                           <img
-                            src={category.imageUrl || category.imageUrl}
-                            alt={category.categoryName || category.categoryName}
+                            src={category.imageUrl}
+                            alt={category.categoryName}
                             className="w-14 h-14 object-cover rounded-lg border border-gray-200"
                           />
                         </td>
