@@ -5,7 +5,7 @@ import { authMiddleware } from "../middleware/authMiddleware.js";
 const supplierRouter = Router();
 
 supplierRouter.post("/create", authMiddleware, createSupplierHandler);
-supplierRouter.get("/get", authMiddleware, getSuppliersHandler);
+supplierRouter.get("/get", getSuppliersHandler);
 supplierRouter.delete("/delete/:id", authMiddleware, deleteSupplierHandler);
 supplierRouter.put("/update/:id", updateSupplier);
 

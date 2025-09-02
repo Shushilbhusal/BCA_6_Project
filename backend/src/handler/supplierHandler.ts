@@ -71,7 +71,7 @@ export const getSuppliersHandler = async (req: Request, res: Response) => {
 
     return res.status(200).json({
       message: "Suppliers fetched successfully",
-      supplier,
+     supplier,
     });
   } catch (error) {
     console.error("Error fetching suppliers:", error);

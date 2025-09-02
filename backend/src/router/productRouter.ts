@@ -7,7 +7,7 @@ import { deleteCategoryHandler } from "../handler/categoryHandler.js";
 const productRouter = Router();
 
 productRouter.get("/get", authMiddleware, getProduct);
-productRouter.get("/getAll", getProductHandler);
+productRouter.get("/getAllProducts", getProductHandler);
 productRouter.post("/create", upload.single("productImage"), addProductHandler);
 productRouter.put("/update/:id",  upload.single("productImage"), updateProductHandler);
 productRouter.delete("/delete/:id", deleteProductHandler);

@@ -38,7 +38,9 @@ export const createProductService = async (product: ProductType) => {
 
 export const getAllProducts = async () => {
     try {
-        return await Product.find().lean().exec();
+       const products = await Product.find();
+       console.log("products in model returning", products);
+        return products;
     } catch (error) {
         console.error("Error fetching products:", error);
         throw error;

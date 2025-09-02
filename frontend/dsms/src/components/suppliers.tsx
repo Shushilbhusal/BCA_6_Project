@@ -1,7 +1,7 @@
-import axios, { AxiosError } from "axios";
 import React, { useEffect, useState } from "react";
+import axios, { AxiosError } from "axios";
 import { RxCross2 } from "react-icons/rx";
-import { FiEdit, FiTrash2, FiPlus, FiSearch } from "react-icons/fi";
+import { FiEdit, FiTrash2, FiPlus, FiSearch, FiChevronDown, FiChevronUp } from "react-icons/fi";
 
 export type Supplier = {
   _id: string;
@@ -15,29 +15,43 @@ export type Supplier = {
 
 function Suppliers() {
   const [suppliers, setSuppliers] = useState<Supplier[]>([]);
-  const [addEditSupplier, setAddEditSuppliers] = useState(false);
+  const [isFormOpen, setIsFormOpen] = useState(false);
   const [editSupplier, setEditSupplier] = useState<Supplier | null>(null);
+
+  // Form fields
   const [supplierName, setSupplierName] = useState("");
   const [supplierEmail, setSupplierEmail] = useState("");
   const [supplierContact, setSupplierContact] = useState("");
   const [supplierAddress, setSupplierAddress] = useState("");
   const [supplierStatus, setSupplierStatus] = useState("");
   const [categoryName, setCategoryName] = useState("");
+
+  const [searchTerm, setSearchTerm] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [searchTerm, setSearchTerm] = useState("");
+  const [sortConfig, setSortConfig] = useState<{ key: string; direction: 'ascending' | 'descending' } | null>(null);
+
+  // 🔹 API base
+  const API_URL = "http://localhost:5000/supplier";
 
   // Fetch suppliers
   const fetchSuppliers = async () => {
     try {
-      const response = await axios.get("http://localhost:5000/supplier/get", {
+      setLoading(true);
+      const res = await axios.get(`${API_URL}/get`, {
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
       });
-      if (response.status === 200) {
-        setSuppliers(response.data.supplier);
+      
+      if (res.status === 200) {
+        // Access the data from res.data.data as per your API response
+        setSuppliers(res.data.supplier)
       }
     } catch (err) {
       console.error("Error fetching suppliers:", err);
+      setSuppliers([]);
+    
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -45,15 +59,39 @@ function Suppliers() {
     fetchSuppliers();
   }, []);
 
-  // Filter suppliers based on search term
-  const filteredSuppliers = suppliers.filter(
-    (supplier) =>
-      supplier.supplierName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      supplier.supplierEmail.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      supplier.categoryName.toLowerCase().includes(searchTerm.toLowerCase())
+  // Sort suppliers
+  const sortedSuppliers = React.useMemo(() => {
+    if (!sortConfig) return suppliers;
+    
+    return [...suppliers].sort((a, b) => {
+      if (a[sortConfig.key as keyof Supplier] < b[sortConfig.key as keyof Supplier]) {
+        return sortConfig.direction === 'ascending' ? -1 : 1;
+      }
+      if (a[sortConfig.key as keyof Supplier] > b[sortConfig.key as keyof Supplier]) {
+        return sortConfig.direction === 'ascending' ? 1 : -1;
+      }
+      return 0;
+    });
+  }, [suppliers, sortConfig]);
+
+  // Request sort
+  const requestSort = (key: string) => {
+    let direction: 'ascending' | 'descending' = 'ascending';
+    if (sortConfig && sortConfig.key === key && sortConfig.direction === 'ascending') {
+      direction = 'descending';
+    }
+    setSortConfig({ key, direction });
+  };
+
+  // Filtered suppliers
+  const filteredSuppliers = sortedSuppliers.filter((s) =>
+    [s.supplierName, s.supplierEmail, s.categoryName, s.supplierAddress]
+      .join(" ")
+      .toLowerCase()
+      .includes(searchTerm.toLowerCase())
   );
 
-  // Reset form fields
+  // Reset form
   const resetForm = () => {
     setSupplierName("");
     setSupplierEmail("");
@@ -64,118 +102,64 @@ function Suppliers() {
     setEditSupplier(null);
   };
 
-  // Submit supplier
-  const handleSubmitSupplier = async (e: React.FormEvent) => {
+  // Open form
+  const openForm = (supplier?: Supplier) => {
+    if (supplier) {
+      setEditSupplier(supplier);
+      setSupplierName(supplier.supplierName);
+      setSupplierEmail(supplier.supplierEmail);
+      setSupplierContact(supplier.supplierContact);
+      setSupplierAddress(supplier.supplierAddress);
+      setSupplierStatus(supplier.supplierStatus);
+      setCategoryName(supplier.categoryName);
+    } else {
+      resetForm();
+    }
+    setIsFormOpen(true);
+  };
+
+  // Close form
+  const closeForm = () => {
+    resetForm();
+    setIsFormOpen(false);
+  };
+
+  // Submit form (create/update)
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setError(null);
 
-    try {
-      const payload = {
-        supplierName,
-        supplierEmail,
-        supplierContact,
-        supplierAddress,
-        supplierStatus,
-        categoryName,
-      };
+    const payload = {
+      supplierName,
+      supplierEmail,
+      supplierContact,
+      supplierAddress,
+      supplierStatus,
+      categoryName,
+    };
 
-      const response = await axios.post(
-        "http://localhost:5000/supplier/create",
-        payload,
-        {
+    try {
+      let res;
+      if (editSupplier) {
+        // update
+        res = await axios.put(`${API_URL}/update/${editSupplier._id}`, payload, {
           headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+        });
+        if (res.status === 200) {
+          alert("Supplier updated successfully");
         }
-      );
-
-      if (response.status === 201) {
-        alert("Supplier added successfully");
-        setAddEditSuppliers(false);
-        resetForm();
-        fetchSuppliers(); // refresh list
-      }
-    } catch (err) {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const axiosErr = err as AxiosError<any>;
-      setError(axiosErr.response?.data?.message || "Something went wrong");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleDeleteSupplier = async (id: string) => {
-    if (window.confirm("Are you sure you want to delete this supplier?")) {
-      try {
-        setLoading(true);
-        const deleteSupplier = await axios.delete(
-          `http://localhost:5000/supplier/delete/${id}`,
-          {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem("token")}`,
-            },
-          }
-        );
-        if (deleteSupplier.status === 201) {
-          alert("Supplier deleted successfully");
-          fetchSuppliers();
-        }
-      } catch (error) {
-        console.log("Error while deleting supplier", error);
-        setError("Error while deleting supplier");
-        alert("Failed to delete supplier");
-      } finally {
-        setLoading(false);
-      }
-    }
-  };
-
-  const handleEditSupplier = async (supplier: Supplier) => {
-    setSupplierName(supplier.supplierName);
-    setSupplierEmail(supplier.supplierEmail);
-    setSupplierContact(supplier.supplierContact);
-    setSupplierAddress(supplier.supplierAddress);
-    setSupplierStatus(supplier.supplierStatus);
-    setCategoryName(supplier.categoryName);
-    setAddEditSuppliers(true);
-    setEditSupplier(supplier);
-  };
-
-  const handleSaveSupplier = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-    setError(null);
-
-    try {
-      const payload = {
-        supplierName,
-        supplierEmail,
-        supplierContact,
-        supplierAddress,
-        supplierStatus,
-        categoryName,
-      };
-
-      const id = editSupplier?._id;
-      console.log("here is the id ", id);
-
-      const response = await axios.put(
-        `http://localhost:5000/supplier/update/${id}`,
-        payload,
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        }
-      );
-
-      if (response.status === 201) {
-        alert("Supplier updated successfully");
-        setAddEditSuppliers(false);
-        resetForm();
-        fetchSuppliers(); // refresh list
       } else {
-        setError("Error while updating data");
+        // create
+        res = await axios.post(`${API_URL}/create`, payload, {
+          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+        });
+        if (res.status === 201) {
+          alert("Supplier added successfully");
+        }
       }
+      closeForm();
+      fetchSuppliers();
     } catch (err) {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const axiosErr = err as AxiosError<any>;
@@ -184,11 +168,42 @@ function Suppliers() {
       setLoading(false);
     }
   };
+
+  // Delete supplier
+  const handleDeleteSupplier = async (id: string) => {
+    if (!window.confirm("Are you sure you want to delete this supplier?")) return;
+    try {
+      setLoading(true);
+      const res = await axios.delete(`${API_URL}/delete/${id}`, {
+        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+      });
+      if (res.status === 201) {
+        alert("Supplier deleted successfully");
+        fetchSuppliers();
+      }
+    } catch (err) {
+      console.error("Delete error:", err);
+      alert("Failed to delete supplier");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Table headers with sorting
+  const tableHeaders = [
+    { key: "supplierName", label: "Name" },
+    { key: "supplierAddress", label: "Address" },
+    { key: "supplierEmail", label: "Email" },
+    { key: "supplierContact", label: "Contact" },
+    { key: "categoryName", label: "Category" },
+    { key: "supplierStatus", label: "Status" },
+  ];
 
   return (
     <div className="min-h-screen bg-gray-50 p-4 md:p-6">
       <div className="max-w-7xl mx-auto">
-        <div className="bg-white rounded-lg shadow-sm p-4 md:p-6">
+        <div className="bg-white rounded-xl shadow-sm p-4 md:p-6">
+          {/* Header */}
           <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-6">
             <div>
               <h2 className="text-xl md:text-2xl font-bold text-gray-800">
@@ -211,11 +226,8 @@ function Suppliers() {
               </div>
               <button
                 type="button"
-                onClick={() => {
-                  resetForm();
-                  setAddEditSuppliers(true);
-                }}
-                className="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg flex items-center justify-center"
+                onClick={() => openForm()}
+                className="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg flex items-center justify-center transition-colors"
               >
                 <FiPlus className="mr-2" />
                 Add Supplier
@@ -223,23 +235,13 @@ function Suppliers() {
             </div>
           </div>
 
-          {suppliers.length === 0 ? (
-            <div className="bg-gray-50 rounded-lg p-8 text-center">
-              <div className="text-gray-400 mb-4">
-                <svg
-                  className="mx-auto h-12 w-12"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
-                  />
-                </svg>
-              </div>
+          {/* Supplier Table */}
+          {loading ? (
+            <div className="flex justify-center items-center py-12">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+            </div>
+          ) : suppliers.length === 0 ? (
+            <div className="bg-gray-50 rounded-xl p-8 text-center">
               <h3 className="text-lg font-medium text-gray-700 mb-1">
                 No suppliers found
               </h3>
@@ -247,104 +249,89 @@ function Suppliers() {
                 Get started by adding your first supplier
               </p>
               <button
-                onClick={() => {
-                  resetForm();
-                  setAddEditSuppliers(true);
-                }}
-                className="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg inline-flex items-center"
+                onClick={() => openForm()}
+                className="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg inline-flex items-center transition-colors"
               >
                 <FiPlus className="mr-2" />
                 Add Supplier
               </button>
             </div>
           ) : (
-            <div className="overflow-x-auto rounded-lg border border-gray-200">
+            <div className="overflow-x-auto rounded-xl border border-gray-200 shadow">
               <table className="w-full">
                 <thead className="bg-gray-50">
                   <tr>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                       S.N
                     </th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Supplier Name
-                    </th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden md:table-cell">
-                      Address
-                    </th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Email
-                    </th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden sm:table-cell">
-                      Contact
-                    </th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Category
-                    </th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Status
-                    </th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    {tableHeaders.map((header) => (
+                      <th
+                        key={header.key}
+                        className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer"
+                        onClick={() => requestSort(header.key)}
+                      >
+                        <div className="flex items-center">
+                          {header.label}
+                          {sortConfig && sortConfig.key === header.key && (
+                            sortConfig.direction === 'ascending' ? 
+                            <FiChevronUp className="ml-1" /> : 
+                            <FiChevronDown className="ml-1" />
+                          )}
+                        </div>
+                      </th>
+                    ))}
+                    <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                       Actions
                     </th>
                   </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
-                  {filteredSuppliers.map((supplier, index) => (
-                    <tr key={supplier._id} className="hover:bg-gray-50">
-                        <td className="px-4 py-4 whitespace-nowrap">
-                        
-                        <div className=" text-gray-900">
-                          {index + 1}
-                        </div>
+                  {filteredSuppliers.map((s, i) => (
+                    <tr key={s._id} className="hover:bg-gray-50 transition-colors">
+                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                        {i + 1}
                       </td>
-                      <td className="px-4 py-4 whitespace-nowrap">
-                        
-                        <div className=" text-gray-900">
-                          {supplier.supplierName}
-                        </div>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                        {s.supplierName}
                       </td>
-                      <td className="px-4 py-4 hidden md:table-cell">
-                        <div className="text-gray-600 max-w-xs truncate">
-                          {supplier.supplierAddress}
-                        </div>
+                      <td className="px-6 py-4 text-sm text-gray-500 max-w-xs truncate">
+                        {s.supplierAddress}
                       </td>
-                      <td className="px-4 py-4 whitespace-nowrap">
-                        <div className="text-gray-600">
-                          {supplier.supplierEmail}
-                        </div>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        {s.supplierEmail}
                       </td>
-                      <td className="px-4 py-4 whitespace-nowrap hidden sm:table-cell">
-                        <div className="text-gray-600">
-                          {supplier.supplierContact}
-                        </div>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        {s.supplierContact}
                       </td>
-                      <td className="px-4 py-4 whitespace-nowrap">
-                        <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">
-                          {supplier.categoryName}
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <span className="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">
+                          {s.categoryName}
                         </span>
                       </td>
-                      <td className="px-4 py-4 whitespace-nowrap">
+                      <td className="px-6 py-4 whitespace-nowrap">
                         <span
-                          className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                            supplier.supplierStatus === "active"
+                          className={`px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${
+                            s.supplierStatus === "active"
                               ? "bg-green-100 text-green-800"
                               : "bg-red-100 text-red-800"
                           }`}
                         >
-                          {supplier.supplierStatus}
+                          {s.supplierStatus}
                         </span>
                       </td>
-                      <td className="px-4 py-4 whitespace-nowrap text-sm font-medium">
-                        <div className="flex space-x-2">
+                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                        <div className="flex space-x-3">
                           <button
-                            className="text-blue-600 hover:text-blue-900 p-1 rounded hover:bg-blue-50"
-                            onClick={() => handleEditSupplier(supplier)}
+                            className="text-blue-600 hover:text-blue-900 p-2 rounded-lg hover:bg-blue-50 transition-colors"
+                            onClick={() => openForm(s)}
+                            title="Edit supplier"
                           >
                             <FiEdit className="w-4 h-4" />
                           </button>
                           <button
-                            className="text-red-600 hover:text-red-900 p-1 rounded hover:bg-red-50"
-                            onClick={() => handleDeleteSupplier(supplier._id)}
+                            className="text-red-600 hover:text-red-900 p-2 rounded-lg hover:bg-red-50 transition-colors"
+                            onClick={() => handleDeleteSupplier(s._id)}
+                            title="Delete supplier"
                           >
                             <FiTrash2 className="w-4 h-4" />
                           </button>
@@ -356,170 +343,134 @@ function Suppliers() {
               </table>
             </div>
           )}
+
+          {/* Error */}
+          {error && (
+            <div className="mt-4 p-3 bg-red-50 border border-red-200 rounded-lg">
+              <p className="text-red-600">{error}</p>
+            </div>
+          )}
         </div>
       </div>
 
-      {/* Add/Edit Modal */}
-      {addEditSupplier && (
-        <div className="fixed inset-0 backdrop-blur-sm bg-black/20 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-xl shadow-2xl max-w-md w-full max-h-[90vh] overflow-y-auto">
-            <div className="flex items-center justify-between p-6 border-b border-gray-200">
-              <h3 className="text-xl font-semibold text-gray-800">
-                {editSupplier ? "Edit Supplier" : "Add New Supplier"}
-              </h3>
-              <button
-                type="button"
-                onClick={() => {
-                  setAddEditSuppliers(false);
-                  resetForm();
-                }}
-                className="text-gray-400 hover:text-gray-600 p-1 rounded-full hover:bg-gray-100"
-              >
-                <RxCross2 className="h-5 w-5" />
-              </button>
-            </div>
-
-            <form
-              onSubmit={
-                editSupplier ? handleSaveSupplier : handleSubmitSupplier
-              }
+      {/* Form Modal */}
+      {isFormOpen && (
+        <div className="fixed inset-0 backdrop-blur-sm bg-black bg-opacity-40 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-xl p-6 w-full max-w-lg shadow-xl relative">
+            <button
+              onClick={closeForm}
+              className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition-colors"
             >
-              <div className="p-6 space-y-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Supplier Name
-                  </label>
-                  <input
-                    type="text"
-                    placeholder="Enter supplier name"
-                    value={supplierName}
-                    onChange={(e) => setSupplierName(e.target.value)}
-                    className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                    required
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Address
-                  </label>
-                  <input
-                    type="text"
-                    placeholder="Enter address"
-                    value={supplierAddress}
-                    onChange={(e) => setSupplierAddress(e.target.value)}
-                    className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                    required
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Contact
-                  </label>
-                  <input
-                    type="text"
-                    placeholder="Enter contact number"
-                    value={supplierContact}
-                    onChange={(e) => setSupplierContact(e.target.value)}
-                    className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                    required
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Email
-                  </label>
-                  <input
-                    type="email"
-                    placeholder="Enter email address"
-                    value={supplierEmail}
-                    onChange={(e) => setSupplierEmail(e.target.value)}
-                    className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                    required
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Category Name
-                  </label>
-                  <input
-                    type="text"
-                    placeholder="Enter category"
-                    value={categoryName}
-                    onChange={(e) => setCategoryName(e.target.value)}
-                    className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                    required
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Status
-                  </label>
-                  <select
-                    value={supplierStatus}
-                    onChange={(e) => setSupplierStatus(e.target.value)}
-                    className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                    required
-                  >
-                    <option value="">Select Status</option>
-                    <option value="active">Active</option>
-                    <option value="inactive">Inactive</option>
-                  </select>
-                </div>
+              <RxCross2 size={24} />
+            </button>
+            <h3 className="text-xl font-bold text-gray-800 mb-6">
+              {editSupplier ? "Edit Supplier" : "Add New Supplier"}
+            </h3>
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Name
+                </label>
+                <input
+                  type="text"
+                  placeholder="Supplier Name"
+                  value={supplierName}
+                  onChange={(e) => setSupplierName(e.target.value)}
+                  className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition"
+                  required
+                />
               </div>
-
-              <div className="flex justify-end gap-3 p-6 border-t border-gray-200">
+              
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Email
+                </label>
+                <input
+                  type="email"
+                  placeholder="supplier@example.com"
+                  value={supplierEmail}
+                  onChange={(e) => setSupplierEmail(e.target.value)}
+                  className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition"
+                  required
+                />
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Contact
+                </label>
+                <input
+                  type="text"
+                  placeholder="Phone number"
+                  value={supplierContact}
+                  onChange={(e) => setSupplierContact(e.target.value)}
+                  className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition"
+                />
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Address
+                </label>
+                <input
+                  type="text"
+                  placeholder="Full address"
+                  value={supplierAddress}
+                  onChange={(e) => setSupplierAddress(e.target.value)}
+                  className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition"
+                />
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Category
+                </label>
+                <input
+                  type="text"
+                  placeholder="Category name"
+                  value={categoryName}
+                  onChange={(e) => setCategoryName(e.target.value)}
+                  className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition"
+                />
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Status
+                </label>
+                <select
+                  value={supplierStatus}
+                  onChange={(e) => setSupplierStatus(e.target.value)}
+                  className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition"
+                  required
+                >
+                  <option value="">Select Status</option>
+                  <option value="active">Active</option>
+                  <option value="inactive">Inactive</option>
+                </select>
+              </div>
+              
+              <div className="flex gap-3 pt-2">
                 <button
                   type="button"
-                  onClick={() => {
-                    setAddEditSuppliers(false);
-                    resetForm();
-                  }}
-                  className="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50"
+                  onClick={closeForm}
+                  className="flex-1 border border-gray-300 text-gray-700 hover:bg-gray-50 font-medium py-2 px-4 rounded-lg transition-colors"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
                   disabled={loading}
+                  className="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {loading
                     ? "Saving..."
                     : editSupplier
-                    ? "Save Changes"
+                    ? "Update Supplier"
                     : "Add Supplier"}
                 </button>
               </div>
             </form>
-          </div>
-        </div>
-      )}
-
-      {loading && (
-        <div className="fixed inset-0 bg-white/40 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-xl shadow-2xl p-6 flex items-center">
-            <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600 mr-3"></div>
-            Loading...
-          </div>
-        </div>
-      )}
-
-      {error && (
-        <div className="fixed inset-0 bg-white/40 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-xl shadow-2xl p-6 max-w-md w-full">
-            <div className="text-red-600 font-medium mb-2">Error</div>
-            <p className="text-gray-700 mb-4">{error}</p>
-            <button
-              onClick={() => setError(null)}
-              className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 w-full"
-            >
-              OK
-            </button>
           </div>
         </div>
       )}

@@ -40,6 +40,7 @@ export const getProduct = async (req: Request, res: Response) => {
 // Fetch all products
 export const getProductHandler = async (req: Request, res: Response) => {
   try {
+    console.log("hello world")
     const products = await getAllProducts();
     if (!products || products.length === 0) {
       return res.status(404).json({ message: "No products found" });
@@ -81,6 +82,7 @@ export const addProductHandler = async (req: Request, res: Response) => {
     console.log("request body", req.body);
 
     //  Find supplier
+    console.log("product supplier", productSupplier);
     const findSupplier = await supplierServiceModel.getSupplierByName(
       productSupplier.trim().replace(/"/g, "")
     );

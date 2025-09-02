@@ -13,6 +13,7 @@ import Profile from "./components/profile";
 import Reports from "./components/reports";
 import Sales from "./components/sales";
 import Employee from "./components/employee";
+import Logout from "./components/logout";
 
 function App() {
   return (
@@ -44,6 +45,7 @@ function App() {
           <Route path="reports" element={<Reports />} />
           <Route path="sales" element={<Sales />} />
           <Route path="employees" element={<Employee />} />
+          <Route path="logout" element={<Logout/>} />
         </Route>
       </Routes>
     </BrowserRouter>
