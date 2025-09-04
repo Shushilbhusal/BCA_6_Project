@@ -1,9 +1,6 @@
 import type { Request, Response } from "express";
 import supplierServiceModel from "../model/supplierService/supplier.js";
-import {
-  getAllCategories,
-  getCategoryByName,
-} from "../model/categoryService/category.js";
+
 import {
   createProductService,
   deleteProductService,
@@ -12,9 +9,10 @@ import {
   updateProductService,
 } from "../model/productService/product.js";
 import { uploadToCloudinary } from "../utils/uploadTocloudinary.js";
+import { getAllCategories, getCategoryById, getCategoryByName } from "../model/categoryService/category.js";
 
 //  Fetch suppliers and categories
-export const getProduct = async (req: Request, res: Response) => {
+export const getSupplierAndcategoryNameHandler = async (req: Request, res: Response) => {
   try {
     const suppliers = await supplierServiceModel.getSupplier();
     if (!suppliers || suppliers.length === 0) {
@@ -59,22 +57,22 @@ export const getProductHandler = async (req: Request, res: Response) => {
 export const addProductHandler = async (req: Request, res: Response) => {
   try {
     const {
-      productName,
-      productDescription,
-      productPrice,
-      productStock,
-      productCategory,
-      productSupplier,
+      name,
+      description,
+      price,
+      stock,
+      categoryName,
+      supplierName,
     } = req.body;
 
     // Validate input
     if (
-      !productName ||
-      !productDescription ||
-      !productPrice ||
-      !productStock ||
-      !productCategory ||
-      !productSupplier
+      !name ||
+      !description ||
+      !price ||
+      !stock ||
+      !categoryName ||
+      !supplierName
     ) {
       return res.status(400).json({ message: "All fields are required" });
     }
@@ -82,29 +80,29 @@ export const addProductHandler = async (req: Request, res: Response) => {
     console.log("request body", req.body);
 
     //  Find supplier
-    console.log("product supplier", productSupplier);
-    const findSupplier = await supplierServiceModel.getSupplierByName(
-      productSupplier.trim().replace(/"/g, "")
+    console.log("product supplier", supplierName);
+    const findSupplier = await supplierServiceModel.getSupplierById(
+      supplierName.trim().replace(/"/g, "")
     );
     console.log("find supplier", findSupplier);
     if (!findSupplier) {
       return res.status(404).json({ message: "Supplier not found" });
     }
 
-    // Find category
-    const findCategory = await getCategoryByName(
-      productCategory.trim().replace(/"/g, "")
+    // Find categoryName
+    const findcategoryName = await getCategoryById(
+      categoryName.trim().replace(/"/g, "")
     );
-    console.log("find category", findCategory);
-    if (!findCategory) {
-      return res.status(404).json({ message: "Category not found" });
+    console.log("find categoryName", findcategoryName);
+    if (!findcategoryName) {
+      return res.status(404).json({ message: "categoryName not found" });
     }
 
     //  Convert numeric fields
-    const productPriceNumber = Number(productPrice);
-    const productStockNumber = Number(productStock);
+    const priceNumber = Number(price);
+    const stockNumber = Number(stock);
 
-    if (isNaN(productPriceNumber) || isNaN(productStockNumber)) {
+    if (isNaN(priceNumber) || isNaN(stockNumber)) {
       return res
         .status(400)
         .json({ message: "Price and stock must be valid numbers" });
@@ -123,15 +121,15 @@ export const addProductHandler = async (req: Request, res: Response) => {
 
     //  Create product
     const product = await createProductService({
-      productName,
-      productDescription,
-      productPrice: productPriceNumber,
-      productStock: productStockNumber,
-      categoryId: findCategory._id, // ensure this exists
+      name,
+      description,
+      price: priceNumber,
+      stock: stockNumber,
+      categoryId: findcategoryName._id, // ensure this exists
       supplierId: findSupplier._id, // ensure this exists
-      categoryName: findCategory.categoryName ?? "",
+      categoryName: findcategoryName.categoryName ?? "",
       supplierName: findSupplier.supplierName ?? "",
-      productImage: uploadedImageUrl,
+      image: uploadedImageUrl,
     });
 
     return res
@@ -148,15 +146,16 @@ export const addProductHandler = async (req: Request, res: Response) => {
 export const updateProductHandler = async (req: Request, res: Response) => {
   try {
     const {
-      productName,
-      productDescription,
-      productPrice,
-      productStock,
-      productCategory,
-      productSupplier,
+      name,
+      description,
+      price,
+      stock,
+      categoryName,
+      supplierName,
     } = req.body;
 
     const productId = req.params.id;
+    console.log("................product id", productId, "req body", req.body);
     if (!productId) {
       return res.status(400).json({ message: "Product id is required" });
     }
@@ -169,68 +168,68 @@ export const updateProductHandler = async (req: Request, res: Response) => {
 
     // Validate required fields
     if (
-      !productName ||
-      !productDescription ||
-      !productPrice ||
-      !productStock ||
-      !productCategory ||
-      !productSupplier
+      !name ||
+      !description ||
+      !price ||
+      !stock ||
+      !categoryName ||
+      !supplierName
     ) {
       return res.status(400).json({ message: "All fields are required" });
     }
 
-    // Clean category & supplier names
-    const cleanCategory = productCategory.replace(/^"|"$/g, "").trim();
-    const cleanSupplier = productSupplier.replace(/^"|"$/g, "").trim();
+    // Clean categoryName & supplier names
+    const cleancategoryName = categoryName.replace(/^"|"$/g, "").trim();
+    const cleanSupplier = supplierName.replace(/^"|"$/g, "").trim();
 
+ 
     // Find supplier
-    const findSupplier = await supplierServiceModel.getSupplierByName(
+    const findSupplier = await supplierServiceModel.getSupplierById(
       cleanSupplier
     );
     if (!findSupplier) {
       return res.status(404).json({ message: "Supplier not found" });
     }
 
-    if (findSupplier.supplierName !== existingProduct.supplierName) {
-    }
+   
 
-    // Find category
-    const findCategory = await getCategoryByName(cleanCategory);
-    if (!findCategory) {
-      return res.status(404).json({ message: "Category not found" });
+    // Find categoryName
+    const findcategoryName = await getCategoryById(cleancategoryName);
+    if (!findcategoryName) {
+      return res.status(404).json({ message: "categoryName not found" });
     }
 
     // Handle image
-    let productImage = (existingProduct as any).productImage; // fallback to old image
+    let image = (existingProduct as any).image; // fallback to old image
     if (req.file?.path) {
       const uploaded = await uploadToCloudinary(req.file.path);
       if (!uploaded) {
         return res.status(400).json({ message: "Image upload failed" });
       }
-      productImage = uploaded;
+      image = uploaded;
     }
 
     // Update product
     console.log("data to update", {
-      productName,
-      productDescription,
-      productPrice: Number(productPrice),
-      productStock: Number(productStock),
-      categoryId: findCategory._id, // check your schema field name
+      name,
+      description,
+      price: Number(price),
+      stock: Number(stock),
+      categoryNameId: findcategoryName._id, // check your schema field name
       supplierId: findSupplier._id, // check your schema field name
-      productImage,
-      categoryName: findCategory.categoryName ?? "",
+      image,
+      categoryName: findcategoryName.categoryName ?? "",
       supplierName: findSupplier.supplierName ?? "",
     });
     const updatedProduct = await updateProductService(productId, {
-      productName,
-      productDescription,
-      productPrice: Number(productPrice),
-      productStock: Number(productStock),
-      categoryId: findCategory._id,
+      name,
+      description,
+      price: Number(price),
+      stock: Number(stock),
+      categoryId: findcategoryName._id,
       supplierId: findSupplier._id,
-      productImage,
-      categoryName: findCategory.categoryName ?? "",
+      image,
+      categoryName: findcategoryName.categoryName ?? "",
       supplierName: findSupplier.supplierName ?? "",
     });
 

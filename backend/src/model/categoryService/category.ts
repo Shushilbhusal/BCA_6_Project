@@ -24,7 +24,7 @@ export const getAllCategories = async () => {
 
 export const getCategoryById = async (id: string) => {
   try {
-    const category = await Category.findById(id).lean().exec();
+    const category = await Category.findById(id);
     return category;
   } catch (error) {
     console.log("error while getting category by id", error);

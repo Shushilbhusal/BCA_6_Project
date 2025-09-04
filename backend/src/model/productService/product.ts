@@ -2,13 +2,13 @@ import type { Types } from "mongoose";
 import Product from "./productSchema.js";
 
 export type ProductType = {
-    productName: string;
-    productPrice: number;
+    name: string;
+    price: number;
     categoryId: Types.ObjectId;
     supplierId: Types.ObjectId;
-    productDescription: string;
-    productImage: string; // better to store URL/path
-    productStock: number;
+    description: string;
+    image: string; // better to store URL/path
+    stock: number;
     categoryName?: string;
     supplierName?: string;
 };
@@ -17,13 +17,13 @@ export const createProductService = async (product: ProductType) => {
     try {
         console.log("product in model", product);
         const newProduct = new Product({
-            name: product.productName,
+            name: product.name,
             supplierId: product.supplierId,
-            price: product.productPrice,
+            price: product.price,
             categoryId: product.categoryId,
-            description: product.productDescription,
-            image: product.productImage,
-            stock: product.productStock,
+            description: product.description,
+            image: product.image,
+            stock: product.stock,
             categoryName: product.categoryName,
             supplierName: product.supplierName,
         });
@@ -53,11 +53,11 @@ export const updateProductService = async (id: string, product: ProductType) => 
     const updatedProduct = await Product.findByIdAndUpdate(
       id,
       {
-        name: product.productName,
-        description: product.productDescription,
-        price: product.productPrice,
-        stock: product.productStock,
-        image: product.productImage,
+        name: product.name,
+        description: product.description,
+        price: product.price,
+        stock: product.stock,
+        image: product.image,
         categoryId: product.categoryId,
         supplierId: product.supplierId,
         categoryName: product.categoryName,

@@ -56,7 +56,7 @@ getSupplierByName: async (name: string) => {
     // Get supplier by id
   getSupplierById: async (id: string) => {
     try {
-      const suppliers = await Supplier.find({_id: id}).lean().exec();
+      const suppliers = await Supplier.findOne({_id: id});
       return suppliers;
     } catch (error) {
       console.error("Error while getting supplier", error);

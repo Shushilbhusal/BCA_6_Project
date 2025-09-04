@@ -1,15 +1,14 @@
 import { Router } from "express";
-import { addProductHandler, deleteProductHandler, getProduct, getProductHandler, updateProductHandler } from "../handler/productHandler.js";
+import { addProductHandler, deleteProductHandler,  getProductHandler, getSupplierAndcategoryNameHandler, updateProductHandler } from "../handler/productHandler.js";
 import { authMiddleware } from "../middleware/authMiddleware.js";
 import { upload } from "../utils/multerConfig.js";
-import { deleteCategoryHandler } from "../handler/categoryHandler.js";
 
 const productRouter = Router();
 
-productRouter.get("/get", authMiddleware, getProduct);
+productRouter.get("/get", getSupplierAndcategoryNameHandler);
 productRouter.get("/getAllProducts", getProductHandler);
-productRouter.post("/create", upload.single("productImage"), addProductHandler);
-productRouter.put("/update/:id",  upload.single("productImage"), updateProductHandler);
+productRouter.post("/create", upload.single("image"), addProductHandler);
+productRouter.put("/update/:id",  upload.single("image"), updateProductHandler);
 productRouter.delete("/delete/:id", deleteProductHandler);
 
 
