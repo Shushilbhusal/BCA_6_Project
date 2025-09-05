@@ -78,7 +78,7 @@ function Sidebar() {
     },
     {
       name: "Logout",
-      path: "/admin/dashboard/logout",
+      path: "/logout",
       icon: <RiLogoutCircleRFill />,
       isParent: false,
     },
@@ -107,7 +107,7 @@ function Sidebar() {
     },
     {
       name: "Logout",
-      path: "/customer/dashboard/logout",
+      path: "/logout",
       icon: <RiLogoutCircleRFill />,
       isParent: false,
     },

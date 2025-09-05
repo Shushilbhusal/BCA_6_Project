@@ -24,26 +24,32 @@ function App() {
         <Route path="/" element={<Root />} />
         <Route path="/login" element={<Login />} />
         <Route path="/unauthorized" element={<h1>Unauthorized</h1>} />
+        <Route
+          path="/logout"
+          element={
+            <ProtectedRoutes requiredRole={["admin", "customer", "employee"]}>
+              <Logout />
+            </ProtectedRoutes>
+          }
+        />
 
-
-
-{/* -----------------------------------Customer------------------------------------------------- */}
-        <Route path="/customer/dashboard" element={<Dashboard/>}>
-        <Route path="/customer/dashboard/products" index element={<CustomerProduct/>} />
-        <Route path="/customer/dashboard/orders" index element={<Orders/>} />
-
+        {/* -----------------------------------Customer------------------------------------------------- */}
+        <Route path="/customer/dashboard" element={<Dashboard />}>
+          <Route
+            path="/customer/dashboard/products"
+            index
+            element={<CustomerProduct />}
+          />
+          <Route path="/customer/dashboard/orders" index element={<Orders />} />
         </Route>
 
+        {/*------------------------------ Admin with Sidebar and dashboard section started----------------*/}
 
-
-
-{/*------------------------------ Admin with Sidebar and dashboard section started----------------*/}
-        
-        <Route  
+        <Route
           path="/admin/dashboard"
           element={
             <ProtectedRoutes requiredRole={["admin"]}>
-              <Dashboard/>
+              <Dashboard />
             </ProtectedRoutes>
           }
         >
@@ -56,11 +62,9 @@ function App() {
           <Route path="reports" element={<Reports />} />
           <Route path="sales" element={<Sales />} />
           <Route path="employees" element={<Employee />} />
-          <Route path="logout" element={<Logout/>} />
         </Route>
 
- {/* -----------------------------Admin with Sidebar and dashboard section completed-------------------*/}
-
+        {/* -----------------------------Admin with Sidebar and dashboard section completed-------------------*/}
       </Routes>
     </BrowserRouter>
   );
