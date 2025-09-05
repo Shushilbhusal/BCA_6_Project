@@ -5,7 +5,7 @@ import { FiEdit, FiTrash2, FiPlus, FiSearch, FiImage } from "react-icons/fi";
 import type { Category } from "./categories";
 import type { Supplier } from "./suppliers";
 
-type ProductType = {
+export type ProductType = {
   _id: string;
   name: string;
   description: string;

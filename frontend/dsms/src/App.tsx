@@ -26,10 +26,12 @@ function App() {
         <Route path="/unauthorized" element={<h1>Unauthorized</h1>} />
 
 
-        
+
 {/* -----------------------------------Customer------------------------------------------------- */}
         <Route path="/customer/dashboard" element={<Dashboard/>}>
         <Route path="/customer/dashboard/products" index element={<CustomerProduct/>} />
+        <Route path="/customer/dashboard/orders" index element={<Orders/>} />
+
         </Route>
 
 

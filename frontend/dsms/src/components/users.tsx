@@ -5,7 +5,7 @@ import { FiEdit, FiTrash2, FiPlus, FiSearch } from "react-icons/fi";
 
 type Role = "admin" | "customer" | "employee";
 
-type UserType = {
+export type UserType = {
   _id: string;
   name: string;
   email: string;

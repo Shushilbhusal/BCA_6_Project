@@ -27,16 +27,17 @@ export const authMiddleware = async (
 ) => {
   try {
     const authHeader = req.headers.authorization;
+    console.log("auth header",authHeader);  
     if (!authHeader || !authHeader.startsWith("Bearer ")) {
-      return res.status(401).json({ message: "Unauthorized Access" });
+      return res.status(401).json({ message: "Unauthorized Access 1" });
     }
 
     const token = authHeader.split(" ")[1];
     if (!token) {
-      return res.status(401).json({ message: "Unauthorized Access" });
+      return res.status(401).json({ message: "Unauthorized Access 2" });
     }
     const decodedToken = await verifyToken(token);
-
+   console.log(decodedToken, "decoded token");
     if (
       !decodedToken ||
       typeof decodedToken === "string" ||

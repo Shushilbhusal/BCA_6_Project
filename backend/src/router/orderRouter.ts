@@ -1,11 +1,13 @@
 import { Router } from "express";
-import { createOrderHandler } from "../handler/orderHandler.js";
+import { createOrderHandler, deleteOrderHandler, getAllorderHandler } from "../handler/orderHandler.js";
 import { authMiddleware } from "../middleware/authMiddleware.js";
 
 const orderRouter = Router();
 
-// orderRouter.get('/get', getOrderHandler);
+orderRouter.get('/get',authMiddleware, getAllorderHandler);
 orderRouter.post('/create',authMiddleware, createOrderHandler);
+orderRouter.delete('/delete/:id',authMiddleware, deleteOrderHandler);
+
 // orderRouter.put('/update', updateOrderHandler);
 // orderRouter.delete('/delete', deleteOrderHandler);
 

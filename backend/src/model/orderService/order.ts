@@ -21,11 +21,9 @@ export const createOrderService = async (order: orderType) => {
 
 export const getOrderByIdService = async (id: string) => {
   try {
-    const order = await Order.findById({
-      _id: id,
-    })
-      .lean()
-      .exec();
+    const order = await Order.find({
+      customerId: id,
+    });
     return order;
   } catch (error) {
     console.log("error while getting order by id", error);
@@ -60,6 +58,31 @@ export const deleteorderService = async (id: string) => {
   try {
     const deleteorder = await Order.deleteOne({ _id: id });
     return deleteorder;
+  } catch (error) {
+    console.error("Error while getting order", error);
+    throw error;
+  }
+};
+
+
+// delete order
+
+const deleteOrderService = async (id: string) => {
+  try {
+    const deleteorder = await Order.deleteOne({ _id: id });
+    return deleteorder;
+  } catch (error) {
+    console.error("Error while getting order", error);
+    throw error;
+  }
+};
+
+// find order by id 
+
+export const findOrderByIdService = async (id: string) => {
+  try {
+    const order = await Order.findById(id);
+    return order;
   } catch (error) {
     console.error("Error while getting order", error);
     throw error;

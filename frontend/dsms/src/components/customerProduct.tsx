@@ -101,7 +101,12 @@ function CustomerProduct() {
     try {
       setLoading(true);
       const response = await axios.get(
-        "http://localhost:5000/product/getAllProducts"
+        "http://localhost:5000/product/getAllProducts",
+         {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
       );
       if (response.status === 200) {
         setProductList(response.data.products);
@@ -183,7 +188,7 @@ function CustomerProduct() {
       {/* Products grid */}
       {!loading && (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-          {filteredProducts.map((product, index) => (
+          {filteredProducts.map((product) => (
             <div key={product._id} className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300">
               <div className="h-48 overflow-hidden">
                 <img
