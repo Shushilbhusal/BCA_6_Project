@@ -355,7 +355,7 @@ function Suppliers() {
 
       {/* Form Modal */}
       {isFormOpen && (
-        <div className="fixed inset-0 backdrop-blur-sm bg-black bg-opacity-40 flex items-center justify-center z-50 p-4">
+        <div className="fixed inset-0 backdrop-blur-sm bg-gray-200 bg-opacity-40 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-xl p-6 w-full max-w-lg shadow-xl relative">
             <button
               onClick={closeForm}

@@ -14,6 +14,7 @@ import Reports from "./components/reports";
 import Sales from "./components/sales";
 import Employee from "./components/employee";
 import Logout from "./components/logout";
+import CustomerProduct from "./components/customerProduct";
 
 function App() {
   return (
@@ -24,11 +25,19 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/unauthorized" element={<h1>Unauthorized</h1>} />
 
-        {/* Customer */}
-        <Route path="/customer/dashboard" element={<h1>Customer Dashboard</h1>} />
 
-        {/* Admin with Sidebar */}
-        <Route
+        
+{/* -----------------------------------Customer------------------------------------------------- */}
+        <Route path="/customer/dashboard" element={<Dashboard/>}>
+        <Route path="/customer/dashboard/products" index element={<CustomerProduct/>} />
+        </Route>
+
+
+
+
+{/*------------------------------ Admin with Sidebar and dashboard section started----------------*/}
+        
+        <Route  
           path="/admin/dashboard"
           element={
             <ProtectedRoutes requiredRole={["admin"]}>
@@ -47,6 +56,9 @@ function App() {
           <Route path="employees" element={<Employee />} />
           <Route path="logout" element={<Logout/>} />
         </Route>
+
+ {/* -----------------------------Admin with Sidebar and dashboard section completed-------------------*/}
+
       </Routes>
     </BrowserRouter>
   );

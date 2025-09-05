@@ -277,7 +277,7 @@ const Products = () => {
 
   if (loading && productsList.length === 0) {
     return (
-      <div className="flex justify-center items-center min-h-screen bg-gray-50">
+      <div className="flex justify-center items-center min-h-screen bg-gray-100">
         <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-indigo-500"></div>
       </div>
     );
@@ -312,7 +312,7 @@ const Products = () => {
 
       {/* Form Modal */}
       {isFormOpen && (
-        <div className="fixed inset-0 bg-white bg-opacity-100 flex items-center justify-center p-4 z-50">
+        <div className="fixed inset-0 bg-gray-200 bg-opacity-100 flex items-center justify-center p-4 z-50">
           <div className="bg-white rounded-xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
             <div className="flex justify-between items-center p-6 border-b">
               <h2 className="text-xl font-semibold text-gray-800">

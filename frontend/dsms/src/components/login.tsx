@@ -41,8 +41,8 @@ function Login() {
       }
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (err: any) {
-      console.error(err);
-
+      console.error("Error logging in:", err);
+     
       // Network error or server error
       if (err.response) {
         setError(err.response.data?.message || "Login failed");

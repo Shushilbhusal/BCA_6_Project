@@ -3,7 +3,7 @@ import { createContext, useContext, useState, type ReactNode, type FC } from "re
 export type User = {
   name: string;
   email: string;
-  role: "admin" | "customer";
+  role: "admin" | "customer" | "employee";
 };
 
 interface AuthContextType {

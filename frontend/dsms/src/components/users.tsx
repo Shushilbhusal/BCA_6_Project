@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import React, { useState, useEffect } from "react";
+import axios from "axios";
 import { RxCross2 } from "react-icons/rx";
 import { FiEdit, FiTrash2, FiPlus, FiSearch } from "react-icons/fi";
 
@@ -36,14 +36,15 @@ function Users() {
   const fetchUsers = async () => {
     setLoading(true);
     try {
-      const response = await axios.get("http://localhost:5000/users/get", {
+      const response = await axios.get("http://localhost:5000/user/get", {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
       });
 
       if (response.status === 200) {
-        setUserList(response.data.users);
+        console.log("users", response.data.getUsers);
+        setUserList(response.data.getUsers);
       }
     } catch (error) {
       console.error("Error while getting Users", error);
@@ -57,10 +58,12 @@ function Users() {
     fetchUsers();
   }, []);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
     setUsers({
       ...users,
-      [e.target.name]: e.target.value
+      [e.target.name]: e.target.value,
     });
   };
 
@@ -81,6 +84,7 @@ function Users() {
     e.preventDefault();
     setLoading(true);
     try {
+      console.log("from handle users", users);
       const formData = new FormData();
       formData.append("name", users.name);
       formData.append("email", users.email);
@@ -89,20 +93,31 @@ function Users() {
       formData.append("password", users.password);
       formData.append("role", users.role as Role);
 
-      const response = await axios.post("http://localhost:5000/users/add", formData, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`
+      const response = await axios.post(
+        "http://localhost:5000/user/create",
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
         }
-      });
+      );
 
       if (response.status === 201) {
+        console.log("response data", response.data);
         alert("User added successfully");
         clearForm();
         fetchUsers();
       }
-    } catch (error) {
-      console.error("Error while adding user", error);
-      setError("Failed to add user");
+     
+    } catch (error: any) {
+      if (error.response && error.response.status === 400) {
+        console.log("response data", error.response.data.message);
+        alert(error.response.data.message);
+      } else {
+        console.error("Error while adding user", error);
+        setError("Failed to add user");
+      }
     } finally {
       setLoading(false);
     }
@@ -138,8 +153,8 @@ function Users() {
         formData,
         {
           headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`
-          }
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
         }
       );
 
@@ -159,7 +174,7 @@ function Users() {
   const handleDelete = async (id: string) => {
     if (window.confirm("Are you sure you want to delete the user?")) {
       try {
-        await axios.delete(`http://localhost:5000/users/delete/${id}`, {
+        await axios.delete(`http://localhost:5000/user/delete/${id}`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
@@ -173,18 +188,23 @@ function Users() {
     }
   };
 
-  const filteredUsers = userList.filter((user) =>
-    user.name.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+const filteredUsers = userList.filter((user) =>
+  user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+  user.email.toLowerCase().includes(searchTerm.toLowerCase())
+);
+
+
 
   if (loading && userList.length === 0) {
-    return <div className="flex justify-center items-center h-64">Loading...</div>;
+    return (
+      <div className="flex justify-center items-center h-64">Loading...</div>
+    );
   }
 
   return (
     <div className="container mx-auto px-4 py-8">
       <h1 className="text-2xl font-bold text-gray-800 mb-6">User Management</h1>
-      
+
       <div className="flex flex-col sm:flex-row justify-between items-center mb-6 gap-4">
         <div className="relative w-full sm:w-64">
           <FiSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
@@ -206,20 +226,25 @@ function Users() {
       </div>
 
       {isFormOpen && (
-        <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
-          <div className="bg-white rounded-lg p-6 w-full max-w-md">
+        <div className="fixed inset-0 flex items-center justify-center z-50 bg-gray-200 bg-opacity-50">
+          <div className="bg-white shadow-2xl rounded-lg p-6 w-full max-w-md">
             <div className="flex justify-between items-center mb-4">
               <h2 className="text-lg font-semibold">
                 {editUser ? "Edit User" : "Add New User"}
               </h2>
-              <button onClick={clearForm} className="text-gray-500 hover:text-gray-700">
+              <button
+                onClick={clearForm}
+                className="text-gray-500 hover:text-gray-700"
+              >
                 <RxCross2 size={20} />
               </button>
             </div>
-            
+
             <form onSubmit={editUser ? handleUpdateUser : handleAddUser}>
               <div className="mb-4">
-                <label className="block text-gray-700 font-semibold mb-2">Name</label>
+                <label className="block text-gray-700 font-semibold mb-2">
+                  Name
+                </label>
                 <input
                   type="text"
                   name="name"
@@ -229,9 +254,11 @@ function Users() {
                   required
                 />
               </div>
-              
+
               <div className="mb-4">
-                <label className="block text-gray-700 font-semibold mb-2">Email</label>
+                <label className="block text-gray-700 font-semibold mb-2">
+                  Email
+                </label>
                 <input
                   type="email"
                   name="email"
@@ -241,9 +268,11 @@ function Users() {
                   required
                 />
               </div>
-              
+
               <div className="mb-4">
-                <label className="block text-gray-700 font-semibold mb-2">Phone Number</label>
+                <label className="block text-gray-700 font-semibold mb-2">
+                  Phone Number
+                </label>
                 <input
                   type="number"
                   name="phone"
@@ -253,21 +282,46 @@ function Users() {
                   required
                 />
               </div>
-              
+              {editUser ? (
+                <div></div>
+              ) : (
+                <div className="mb-4">
+                  <label className="block text-gray-700 font-semibold mb-2">
+                    Password
+                  </label>
+                  <input
+                    type="password"
+                    name="password"
+                    value={users.password}
+                    onChange={handleChange}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    required
+                  />
+                </div>
+              )}
+
+              {editUser && users.role === "admin" ? (
+                <div className="mb-4">
+                  <label className="block text-gray-700 font-semibold mb-2">
+                    Password
+                  </label>
+                  <input
+                    type="password"
+                    name="password"
+                    value={users.password}
+                    onChange={handleChange}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    required
+                  />
+                </div>
+              ) : (
+                <div></div>
+              )}
+
               <div className="mb-4">
-                <label className="block text-gray-700 font-semibold mb-2">Password</label>
-                <input
-                  type="password"
-                  name="password"
-                  value={users.password}
-                  onChange={handleChange}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                  required
-                />
-              </div>
-              
-              <div className="mb-4">
-                <label className="block text-gray-700 font-semibold mb-2">Address</label>
+                <label className="block text-gray-700 font-semibold mb-2">
+                  Address
+                </label>
                 <input
                   type="text"
                   name="address"
@@ -277,9 +331,11 @@ function Users() {
                   required
                 />
               </div>
-              
+
               <div className="mb-4">
-                <label className="block text-gray-700 font-semibold mb-2">Role</label>
+                <label className="block text-gray-700 font-semibold mb-2">
+                  Role
+                </label>
                 <select
                   name="role"
                   value={users.role || ""}
@@ -293,7 +349,7 @@ function Users() {
                   <option value="employee">Employee</option>
                 </select>
               </div>
-              
+
               <div className="flex justify-end gap-2">
                 <button
                   type="button"
@@ -307,7 +363,11 @@ function Users() {
                   disabled={loading}
                   className="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition-colors disabled:opacity-50"
                 >
-                  {loading ? "Processing..." : (editUser ? "Save Changes" : "Add User")}
+                  {loading
+                    ? "Processing..."
+                    : editUser
+                    ? "Save Changes"
+                    : "Add User"}
                 </button>
               </div>
             </form>
@@ -319,20 +379,35 @@ function Users() {
         <div className="p-6 border-b border-gray-200">
           <h2 className="text-xl font-semibold text-gray-800">User List</h2>
           <p className="text-sm text-gray-600 mt-1">
-            {filteredUsers.length} User{filteredUsers.length !== 1 ? 's' : ''} found
+            {filteredUsers.length} User{filteredUsers.length !== 1 ? "s" : ""}{" "}
+            found
           </p>
         </div>
 
         {filteredUsers.length === 0 ? (
           <div className="text-center py-12">
             <div className="text-gray-400 mb-4">
-              <svg className="mx-auto h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+              <svg
+                className="mx-auto h-12 w-12"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"
+                />
               </svg>
             </div>
-            <h3 className="text-lg font-medium text-gray-700 mb-2">No users found</h3>
+            <h3 className="text-lg font-medium text-gray-700 mb-2">
+              No users found
+            </h3>
             <p className="text-gray-500 mb-4">
-              {userList.length === 0 ? "Get started by adding users" : "No users match your search."}
+              {userList.length === 0
+                ? "Get started by adding users"
+                : "No users match your search."}
             </p>
             {userList.length === 0 && (
               <button
@@ -348,19 +423,33 @@ function Users() {
             <table className="min-w-full divide-y divide-gray-200">
               <thead className="bg-gray-50">
                 <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Phone</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Address</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Role</th>
-                  <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Name
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Email
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Phone
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Address
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Role
+                  </th>
+                  <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Actions
+                  </th>
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
                 {filteredUsers.map((user) => (
                   <tr key={user._id} className="hover:bg-gray-50">
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm font-medium text-gray-900">{user.name}</div>
+                      <div className="text-sm font-medium text-gray-900">
+                        {user.name}
+                      </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="text-sm text-gray-900">{user.email}</div>
@@ -369,7 +458,9 @@ function Users() {
                       <div className="text-sm text-gray-900">{user.phone}</div>
                     </td>
                     <td className="px-6 py-4">
-                      <div className="text-sm text-gray-900">{user.address}</div>
+                      <div className="text-sm text-gray-900">
+                        {user.address}
+                      </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">

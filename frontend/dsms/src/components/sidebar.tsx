@@ -1,14 +1,27 @@
 import { AiFillProduct } from "react-icons/ai";
 import { CgProfile } from "react-icons/cg";
-import { FaCartArrowDown, FaHome, FaUsers, FaChartBar, FaCashRegister } from "react-icons/fa";
+import {
+  FaCartArrowDown,
+  FaHome,
+  FaUsers,
+  FaChartBar,
+  FaCashRegister,
+} from "react-icons/fa";
 import { RiCaravanLine, RiLogoutCircleRFill } from "react-icons/ri";
 import { TbCategoryFilled } from "react-icons/tb";
 import { MdPeople } from "react-icons/md";
 import { NavLink } from "react-router-dom";
+import { useAuth } from "../context/authContext";
+import { useEffect, useState } from "react";
 
 function Sidebar() {
   const menuItems = [
-    { name: "Dashboard", path: "/admin/dashboard", icon: <FaHome /> , isParent: true,},
+    {
+      name: "Dashboard",
+      path: "/admin/dashboard",
+      icon: <FaHome />,
+      isParent: true,
+    },
     {
       name: "Categories",
       path: "/admin/dashboard/categories",
@@ -71,19 +84,56 @@ function Sidebar() {
     },
   ];
 
+  const { user } = useAuth();
+
+  const customerItems = [
+    {
+      name: "Products",
+      path: "/customer/dashboard/products",
+      icon: <AiFillProduct />,
+      isParent: false,
+    },
+    {
+      name: "Orders",
+      path: "/customer/dashboard/orders",
+      icon: <FaCartArrowDown />,
+      isParent: false,
+    },
+    {
+      name: "Profile",
+      path: "/customer/dashboard/profile",
+      icon: <CgProfile />,
+      isParent: false,
+    },
+    {
+      name: "Logout",
+      path: "/customer/dashboard/logout",
+      icon: <RiLogoutCircleRFill />,
+      isParent: false,
+    },
+  ];
+
+  const [sidebar, setSidebar] = useState(customerItems);
+
+  useEffect(() => {
+    if (user && user.role === "admin") {
+      setSidebar(menuItems);
+    }
+  },[]);
+
   return (
     <div className="h-screen bg-gradient-to-b from-blue-50 to-indigo-50 shadow-xl flex flex-col border-r border-gray-200">
       {/* Header */}
       <div className="p-5 border-b border-gray-200 bg-white">
         <h1 className="text-xl font-bold text-indigo-700 tracking-wide flex items-center">
-          Department Store Management System 
+          Department Store Management System
         </h1>
       </div>
 
       {/* Navigation Items */}
       <nav className="flex-1 overflow-y-auto pt-6 px-4">
         <ul className="space-y-3">
-          {menuItems.map((item, index) => {
+          {sidebar.map((item, index) => {
             const isLogout = item.name === "Logout";
             return (
               <li key={index}>
@@ -113,8 +163,9 @@ function Sidebar() {
       </nav>
 
       {/* Footer */}
+
       <div className="p-4 text-center text-gray-400 text-xs bg-white border-t border-gray-200">
-        © 2023 Department Store. All rights reserved.
+        © {new Date().getFullYear()} Department Store. All rights reserved.
       </div>
     </div>
   );
