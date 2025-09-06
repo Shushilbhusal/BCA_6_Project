@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import axios from "axios";
 import React, { useState, useRef, useEffect } from "react";
 import { FiSearch } from "react-icons/fi";
@@ -117,6 +118,14 @@ function Categories() {
         setCategories(updatedCategories.data.category);
       } catch (error) {
         console.log("Error deleting category:", error);
+        if (
+          typeof error === "object" &&
+          error !== null &&
+          "response" in error
+        ) {
+          // Type assertion to access response safely
+          alert((error as any).response.data.message);
+        }
         alert("Failed to delete category");
       }
     }
@@ -207,18 +216,18 @@ function Categories() {
     <div className="p-6 bg-gray-50 min-h-screen">
       <h1 className="text-3xl font-bold text-indigo-800 mb-8 text-center">
         Category Management
-       </h1>
+      </h1>
       <div className="relative mb-6  mr-5  flex flex-row-reverse">
-         <div className="relative">
-                <FiSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
-                <input
-                  type="text"
-                  placeholder="Search categories..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full sm:w-64 pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                />
-              </div>
+        <div className="relative">
+          <FiSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+          <input
+            type="text"
+            placeholder="Search categories..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="w-full sm:w-64 pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+          />
+        </div>
       </div>
 
       <div className="flex flex-col lg:flex-row gap-6">

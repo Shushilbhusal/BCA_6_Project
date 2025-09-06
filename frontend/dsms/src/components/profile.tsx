@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 
@@ -14,7 +15,13 @@ function Profile() {
   const [userData, setUserData] = useState<UserProfileType | null>(null);
   const [editProfile, setEditProfile] = useState(false);
   const [loading, setLoading] = useState(true);
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<{
+    name: string;
+    email: string;
+    address: string;
+    phone: number;
+    password?: string;
+  }>({
     name: "",
     email: "",
     address: "",
@@ -36,37 +43,44 @@ function Profile() {
     });
   };
 
-const fetchUserProfile = async () => {
-  const token = localStorage.getItem("token");
-  if (!token) {
-    alert("No token found. Please log in again.");
-    return;
-  }
-
-  try {
-    setLoading(true);
-    const response = await axios.get("http://localhost:5000/user/getprofile", {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-
-    if (response.status === 200) {
-      const user = response.data.userWithoutPassword;
-      console.log("User Profile:", user);
-      setUserData(user);
-      handleFormData(user); // Pass data directly if needed
+  const fetchUserProfile = async () => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      alert("No token found. Please log in again.");
+      return;
     }
-  } catch (error: any) {
-    if (error.response) {
-      alert(`Error: ${error.response.data.message || 'Failed to fetch profile data'}`);
-    } else {
-      alert("Network error or server not responding");
+
+    try {
+      setLoading(true);
+      const response = await axios.get(
+        "http://localhost:5000/user/getprofile",
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (response.status === 200) {
+        const user = response.data.userWithoutPassword;
+        console.log("User Profile:", user);
+        setUserData(user);
+        handleFormData(user); // Pass data directly if needed
+      }
+    } catch (error: any) {
+      if (error.response) {
+        alert(
+          `Error: ${
+            error.response.data.message || "Failed to fetch profile data"
+          }`
+        );
+      } else {
+        alert("Network error or server not responding");
+      }
+    } finally {
+      setLoading(false);
     }
-  } finally {
-    setLoading(false);
-  }
-};
+  };
 
   useEffect(() => {
     fetchUserProfile();

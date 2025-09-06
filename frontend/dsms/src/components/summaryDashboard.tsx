@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 
@@ -79,13 +80,28 @@ function SummaryDashboard() {
         <div className="bg-white rounded-xl shadow-md p-5 hover:shadow-lg transition-shadow duration-300">
           <div className="flex items-center">
             <div className="p-3 rounded-lg bg-blue-100">
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" />
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-6 w-6 text-blue-600"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"
+                />
               </svg>
             </div>
             <div className="ml-4">
-              <h3 className="text-sm font-medium text-gray-600">Total Products</h3>
-              <p className="text-2xl font-bold text-gray-800">{dashboardData.totalProducts}</p>
+              <h3 className="text-sm font-medium text-gray-600">
+                Total Products
+              </h3>
+              <p className="text-2xl font-bold text-gray-800">
+                {dashboardData.totalProducts}
+              </p>
             </div>
           </div>
         </div>
@@ -94,13 +110,26 @@ function SummaryDashboard() {
         <div className="bg-white rounded-xl shadow-md p-5 hover:shadow-lg transition-shadow duration-300">
           <div className="flex items-center">
             <div className="p-3 rounded-lg bg-green-100">
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" />
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-6 w-6 text-green-600"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"
+                />
               </svg>
             </div>
             <div className="ml-4">
               <h3 className="text-sm font-medium text-gray-600">Total Stock</h3>
-              <p className="text-2xl font-bold text-gray-800">{dashboardData.totalStock}</p>
+              <p className="text-2xl font-bold text-gray-800">
+                {dashboardData.totalStock}
+              </p>
             </div>
           </div>
         </div>
@@ -109,13 +138,28 @@ function SummaryDashboard() {
         <div className="bg-white rounded-xl shadow-md p-5 hover:shadow-lg transition-shadow duration-300">
           <div className="flex items-center">
             <div className="p-3 rounded-lg bg-purple-100">
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-purple-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-6 w-6 text-purple-600"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"
+                />
               </svg>
             </div>
             <div className="ml-4">
-              <h3 className="text-sm font-medium text-gray-600">Total Orders</h3>
-              <p className="text-2xl font-bold text-gray-800">{dashboardData.totalOrders}</p>
+              <h3 className="text-sm font-medium text-gray-600">
+                Total Orders
+              </h3>
+              <p className="text-2xl font-bold text-gray-800">
+                {dashboardData.totalOrders}
+              </p>
             </div>
           </div>
         </div>
@@ -124,13 +168,28 @@ function SummaryDashboard() {
         <div className="bg-white rounded-xl shadow-md p-5 hover:shadow-lg transition-shadow duration-300">
           <div className="flex items-center">
             <div className="p-3 rounded-lg bg-yellow-100">
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-yellow-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-6 w-6 text-yellow-600"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                />
               </svg>
             </div>
             <div className="ml-4">
-              <h3 className="text-sm font-medium text-gray-600">Today's Orders</h3>
-              <p className="text-2xl font-bold text-gray-800">{dashboardData.orderToday}</p>
+              <h3 className="text-sm font-medium text-gray-600">
+                Today's Orders
+              </h3>
+              <p className="text-2xl font-bold text-gray-800">
+                {dashboardData.orderToday}
+              </p>
             </div>
           </div>
         </div>
@@ -139,13 +198,28 @@ function SummaryDashboard() {
         <div className="bg-white rounded-xl shadow-md p-5 hover:shadow-lg transition-shadow duration-300">
           <div className="flex items-center">
             <div className="p-3 rounded-lg bg-red-100">
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-6 w-6 text-red-600"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                />
               </svg>
             </div>
             <div className="ml-4">
-              <h3 className="text-sm font-medium text-gray-600">Total Revenue</h3>
-              <p className="text-2xl font-bold text-gray-800">₹{dashboardData.totalRevenue}</p>
+              <h3 className="text-sm font-medium text-gray-600">
+                Total Revenue
+              </h3>
+              <p className="text-2xl font-bold text-gray-800">
+                ₹{dashboardData.totalRevenue}
+              </p>
             </div>
           </div>
         </div>
@@ -155,15 +229,31 @@ function SummaryDashboard() {
         {/* Top Selling Products */}
         <div className="bg-white rounded-xl shadow-md p-6 hover:shadow-lg transition-shadow duration-300">
           <h2 className="text-xl font-semibold text-gray-800 mb-4 flex items-center">
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-green-500 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-5 w-5 text-green-500 mr-2"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"
+              />
             </svg>
             Top Selling Products
           </h2>
-          
+
           {dashboardData.topSellingProducts.length === 1 &&
           "message" in dashboardData.topSellingProducts[0] ? (
-            <p className="text-gray-500 text-center py-4">{(dashboardData.topSellingProducts[0] as { message: string }).message}</p>
+            <p className="text-gray-500 text-center py-4">
+              {
+                (dashboardData.topSellingProducts[0] as { message: string })
+                  .message
+              }
+            </p>
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full">
@@ -176,10 +266,15 @@ function SummaryDashboard() {
                 </thead>
                 <tbody>
                   {dashboardData.topSellingProducts.map((product, index) => (
-                    <tr key={index} className="border-b hover:bg-gray-50 transition-colors duration-150">
+                    <tr
+                      key={index}
+                      className="border-b hover:bg-gray-50 transition-colors duration-150"
+                    >
                       <td className="py-3">{(product as any).name}</td>
                       <td className="py-3">{(product as any).categoryName}</td>
-                      <td className="py-3 text-right font-medium">{(product as any).totalQuantity}</td>
+                      <td className="py-3 text-right font-medium">
+                        {(product as any).totalQuantity}
+                      </td>
                     </tr>
                   ))}
                 </tbody>
@@ -191,17 +286,30 @@ function SummaryDashboard() {
         {/* Low Stock Products */}
         <div className="bg-white rounded-xl shadow-md p-6 hover:shadow-lg transition-shadow duration-300">
           <h2 className="text-xl font-semibold text-gray-800 mb-4 flex items-center">
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-yellow-500 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-5 w-5 text-yellow-500 mr-2"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+              />
             </svg>
             Low Stock Products (Below 5)
             <span className="ml-2 bg-yellow-100 text-yellow-800 text-xs font-medium px-2.5 py-0.5 rounded-full">
               {dashboardData.lowStockCount}
             </span>
           </h2>
-          
+
           {dashboardData.lowStockDetails.length === 0 ? (
-            <p className="text-gray-500 text-center py-4">No low stock products.</p>
+            <p className="text-gray-500 text-center py-4">
+              No low stock products.
+            </p>
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full">
@@ -214,9 +322,14 @@ function SummaryDashboard() {
                 </thead>
                 <tbody>
                   {dashboardData.lowStockDetails.map((product, index) => (
-                    <tr key={index} className="border-b hover:bg-gray-50 transition-colors duration-150">
+                    <tr
+                      key={index}
+                      className="border-b hover:bg-gray-50 transition-colors duration-150"
+                    >
                       <td className="py-3">{product.name}</td>
-                      <td className="py-3">{product.categoryId?.categoryName || "N/A"}</td>
+                      <td className="py-3">
+                        {product.categoryId?.categoryName || "N/A"}
+                      </td>
                       <td className="py-3 text-right">
                         <span className="bg-yellow-100 text-yellow-800 text-xs font-medium px-2.5 py-0.5 rounded-full">
                           {product.stock}
@@ -233,17 +346,30 @@ function SummaryDashboard() {
         {/* Out of Stock Products */}
         <div className="bg-white rounded-xl shadow-md p-6 hover:shadow-lg transition-shadow duration-300 lg:col-span-2">
           <h2 className="text-xl font-semibold text-gray-800 mb-4 flex items-center">
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-red-500 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-5 w-5 text-red-500 mr-2"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+              />
             </svg>
             Out of Stock Products
             <span className="ml-2 bg-red-100 text-red-800 text-xs font-medium px-2.5 py-0.5 rounded-full">
               {dashboardData.outOfStockCount}
             </span>
           </h2>
-          
+
           {dashboardData.outOfStockDetails.length === 0 ? (
-            <p className="text-gray-500 text-center py-4">No out of stock products.</p>
+            <p className="text-gray-500 text-center py-4">
+              No out of stock products.
+            </p>
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full">
@@ -256,9 +382,14 @@ function SummaryDashboard() {
                 </thead>
                 <tbody>
                   {dashboardData.outOfStockDetails.map((product, index) => (
-                    <tr key={index} className="border-b hover:bg-gray-50 transition-colors duration-150">
+                    <tr
+                      key={index}
+                      className="border-b hover:bg-gray-50 transition-colors duration-150"
+                    >
                       <td className="py-3">{product.name}</td>
-                      <td className="py-3">{product.categoryId?.categoryName || "N/A"}</td>
+                      <td className="py-3">
+                        {product.categoryId?.categoryName || "N/A"}
+                      </td>
                       <td className="py-3 text-right">
                         <span className="bg-red-100 text-red-800 text-xs font-medium px-2.5 py-0.5 rounded-full">
                           {product.stock}

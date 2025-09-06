@@ -10,7 +10,6 @@ import Suppliers from "./components/suppliers";
 import Orders from "./components/orders";
 import Users from "./components/users";
 import Profile from "./components/profile";
-import Reports from "./components/reports";
 import Sales from "./components/sales";
 import Logout from "./components/logout";
 import CustomerProduct from "./components/customerProduct";
@@ -63,7 +62,6 @@ function App() {
           <Route path="suppliers" element={<Suppliers />} />
           <Route path="orders" element={<Orders />} />
           <Route path="users" element={<Users />} />
-          <Route path="reports" element={<Reports />} />
           <Route path="sales" element={<Sales />} />
         </Route>
 

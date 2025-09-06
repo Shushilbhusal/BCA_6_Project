@@ -4,12 +4,10 @@ import {
   FaCartArrowDown,
   FaHome,
   FaUsers,
-  FaChartBar,
   FaCashRegister,
 } from "react-icons/fa";
 import { RiCaravanLine, RiLogoutCircleRFill } from "react-icons/ri";
 import { TbCategoryFilled } from "react-icons/tb";
-import { MdPeople } from "react-icons/md";
 import { NavLink } from "react-router-dom";
 import { useAuth } from "../context/authContext";
 import { useEffect, useState } from "react";
@@ -52,13 +50,13 @@ function Sidebar() {
       icon: <FaCashRegister />,
       isParent: false,
     },
-    {
-      name: "Reports & Analytics",
-      path: "/admin/dashboard/reports",
-      icon: <FaChartBar />,
-      isParent: false,
-    },
-    
+    // {
+    //   name: "Reports & Analytics",
+    //   path: "/admin/dashboard/reports",
+    //   icon: <FaChartBar />,
+    //   isParent: false,
+    // },
+
     {
       name: "Users",
       path: "/admin/dashboard/users",
@@ -114,7 +112,7 @@ function Sidebar() {
     if (user && user.role === "admin") {
       setSidebar(menuItems);
     }
-  },[]);
+  }, []);
 
   return (
     <div className="h-screen bg-gradient-to-b from-blue-50 to-indigo-50 shadow-xl flex flex-col border-r border-gray-200">

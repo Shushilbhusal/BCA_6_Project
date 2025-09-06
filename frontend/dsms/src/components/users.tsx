@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-expressions */
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { RxCross2 } from "react-icons/rx";
@@ -49,7 +50,6 @@ function Users() {
     } catch (error) {
       console.error("Error while getting Users", error);
       setError("Failed to fetch users");
-    
     } finally {
       setLoading(false);
     }
@@ -110,7 +110,8 @@ function Users() {
         clearForm();
         fetchUsers();
       }
-     
+
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       if (error.response && error.response.status === 400) {
         console.log("response data", error.response.data.message);
@@ -123,6 +124,10 @@ function Users() {
       setLoading(false);
     }
   };
+
+  {
+    error && console.log("error", error);
+  }
 
   const handleEditUser = (user: UserType) => {
     setEditUser(user);
@@ -189,12 +194,11 @@ function Users() {
     }
   };
 
-const filteredUsers = userList.filter((user) =>
-  user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-  user.email.toLowerCase().includes(searchTerm.toLowerCase())
-);
-
-
+  const filteredUsers = userList.filter(
+    (user) =>
+      user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      user.email.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   if (loading && userList.length === 0) {
     return (

@@ -3,6 +3,7 @@ import supplierServiceModel from "../model/supplierService/supplier.js";
 import { getCategoryByName } from "../model/categoryService/category.js";
 import { Supplier } from "../model/supplierService/supplierSchema.js";
 import type { Types } from "mongoose";
+import Product from "../model/productService/productSchema.js";
 
 // CREATE SUPPLIER
 export const createSupplierHandler = async (req: Request, res: Response) => {
@@ -87,6 +88,14 @@ export const deleteSupplierHandler = async (req: Request, res: Response) => {
     if (!id || id === undefined) {
       console.log("id is required");
       return null;
+    }
+
+    const productCount = await Product.countDocuments({ supplierId: id });
+
+    if (productCount > 0) {
+      return res
+        .status(400)
+        .json({ message: "Cannot delete supplier with associated products" });
     }
     const findSupplier = await supplierServiceModel.getSupplierById(id);
     if (!findSupplier) {

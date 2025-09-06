@@ -8,6 +8,7 @@ import {
   updateCategoryById,
 } from "../model/categoryService/category.js";
 import { uploadToCloudinary } from "../utils/uploadTocloudinary.js";
+import Product from "../model/productService/productSchema.js";
 
 export const createCategoryHandler = async (req: Request, res: Response) => {
   const { categoryName, categoryDescription } = req.body;
@@ -73,6 +74,14 @@ export const deleteCategoryHandler = async (req: Request, res: Response) => {
     const { id } = req.params;
     if (!id) {
       return res.status(400).json({ message: "Category id is required" });
+    }
+
+    const productCount = await Product.countDocuments({ categoryId: id });
+
+    if (productCount > 0) {
+      return res
+        .status(400)
+        .json({ message: "Cannot delete category with associated products" });
     }
     const findCategory = await getCategoryById(id);
     if (!findCategory) {
