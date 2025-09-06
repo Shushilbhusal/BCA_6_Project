@@ -14,6 +14,8 @@ import Sales from "./components/sales";
 import Logout from "./components/logout";
 import CustomerProduct from "./components/customerProduct";
 import SummaryDashboard from "./components/summaryDashboard";
+import OrderAdmin from "./components/orderAdmin";
+import EmployeeSummaryDashboard from "./components/employeeSummaryDashboard";
 
 function App() {
   return (
@@ -23,49 +25,80 @@ function App() {
         <Route path="/" element={<Root />} />
         <Route path="/login" element={<Login />} />
         <Route path="/profile" element={<Profile />} />
-
         <Route path="/unauthorized" element={<h1>Unauthorized</h1>} />
+
+        {/* Logout accessible to all logged-in users */}
         <Route
           path="/logout"
           element={
-            <ProtectedRoutes requiredRole={["admin", "customer", "employee"]}>
+            <ProtectedRoutes requiredRole={["admin", "employee", "customer"]}>
               <Logout />
             </ProtectedRoutes>
           }
         />
 
-        {/* -----------------------------------Customer------------------------------------------------- */}
-        <Route path="/customer/dashboard" element={<Dashboard />}>
-          <Route
-            path="/customer/dashboard/products"
-            index
-            element={<CustomerProduct />}
-          />
-          <Route path="/customer/dashboard/orders" index element={<Orders />} />
+        {/* --------------------------- Customer --------------------------- */}
+        <Route
+          path="/customer/dashboard"
+          element={
+            <ProtectedRoutes requiredRole={["customer"]}>
+              <Dashboard />
+            </ProtectedRoutes>
+          }
+        >
+          <Route index element={<CustomerProduct />} />
+          <Route path="products" element={<CustomerProduct />} />
+          <Route path="orders" element={<Orders />} />
         </Route>
 
-        {/*------------------------------ Admin with Sidebar and dashboard section started----------------*/}
-
+        {/* --------------------------- Admin --------------------------- */}
         <Route
           path="/admin/dashboard"
           element={
             <ProtectedRoutes requiredRole={["admin"]}>
-
               <Dashboard />
             </ProtectedRoutes>
           }
         >
           <Route index element={<SummaryDashboard />} />
-
           <Route path="categories" element={<Categories />} />
           <Route path="products" element={<Products />} />
           <Route path="suppliers" element={<Suppliers />} />
-          <Route path="orders" element={<Orders />} />
+          <Route path="orders" element={<OrderAdmin />} />
           <Route path="users" element={<Users />} />
           <Route path="sales" element={<Sales />} />
         </Route>
 
-        {/* -----------------------------Admin with Sidebar and dashboard section completed-------------------*/}
+        {/* --------------------------- Employee --------------------------- */}
+        <Route
+          path="/employee/dashboard"
+          element={
+            <ProtectedRoutes requiredRole={["employee"]}>
+              <Dashboard />
+            </ProtectedRoutes>
+          }
+        >
+          <Route index element={<EmployeeSummaryDashboard />} />
+
+          {/* Products and Sales shared with admin */}
+          <Route
+            path="products"
+            element={
+              <ProtectedRoutes requiredRole={["admin", "employee"]}>
+                <Products />
+              </ProtectedRoutes>
+            }
+          />
+          <Route
+            path="sales"
+            element={
+              <ProtectedRoutes requiredRole={["admin", "employee"]}>
+                <Sales />
+              </ProtectedRoutes>
+            }
+          />
+          <Route path="orders" element={<OrderAdmin />} />
+        </Route>
       </Routes>
     </BrowserRouter>
   );

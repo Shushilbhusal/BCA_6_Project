@@ -21,7 +21,7 @@ type TopSellingProduct =
       message: string;
     };
 
-function SummaryDashboard() {
+function EmployeeSummaryDashboard() {
   const [dashboardData, setDashboardData] = useState({
     totalProducts: 0,
     totalStock: 0,
@@ -195,7 +195,7 @@ function SummaryDashboard() {
         </div>
 
         {/* Total Revenue Card */}
-        <div className="bg-white rounded-xl shadow-md p-5 hover:shadow-lg transition-shadow duration-300">
+        {/* <div className="bg-white rounded-xl shadow-md p-5 hover:shadow-lg transition-shadow duration-300">
           <div className="flex items-center">
             <div className="p-3 rounded-lg bg-red-100">
              <div><h1 className="text-2xl font-bold text-yellow-500">Rs</h1></div>
@@ -209,7 +209,7 @@ function SummaryDashboard() {
               </p>
             </div>
           </div>
-        </div>
+        </div> */}
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -394,4 +394,4 @@ function SummaryDashboard() {
   );
 }
 
-export default SummaryDashboard;
+export default EmployeeSummaryDashboard;

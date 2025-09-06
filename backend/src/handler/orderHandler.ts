@@ -10,6 +10,9 @@ import Product from "../model/productService/productSchema.js";
 import { getProductById } from "../model/productService/product.js";
 import type { Types } from "mongoose";
 import { getUserByIdService } from "../model/userService/user.js";
+import { Order } from "../model/orderService/orderModel.js";
+import { get } from "http";
+import { User } from "../model/userService/userSchema.js";
 
 export const createOrderHandler = async (req: Request, res: Response) => {
   try {
@@ -20,19 +23,16 @@ export const createOrderHandler = async (req: Request, res: Response) => {
       return;
     }
     const product = await Product.findById(productId);
-    
+
     if (!product) {
       res.status(404).json({ message: "Product not found" });
       return;
     }
-      // "product" is a Mongoose document returned by findById.
-      // We can update its fields directly and call .save()
-      // to persist the changes in MongoDB.
-      // otherwise we can use updateOne method in Prdouct model
-   
-    
+    // "product" is a Mongoose document returned by findById.
+    // We can update its fields directly and call .save()
+    // to persist the changes in MongoDB.
+    // otherwise we can use updateOne method in Prdouct model
 
-    
     const customerId = req.user._id;
     if (!productId || !quantity || !total || !price) {
       res.status(400).json({ message: "All fields are required" });
@@ -46,7 +46,6 @@ export const createOrderHandler = async (req: Request, res: Response) => {
     });
     if (!order) {
       res.status(400).json({ message: "Order not created" });
-
     }
     product.stock = product.stock - Number(quantity); // decrease stock by quantity
     await product.save();
@@ -105,21 +104,23 @@ export const getAllorderHandler = async (req: Request, res: Response) => {
 export const deleteOrderHandler = async (req: Request, res: Response) => {
   try {
     const id = req.params.id;
+    console.log("order id is.....", id);
     if (!id) {
       console.log("order id is required");
       return;
     }
 
     const findOrder = await findOrderByIdService(id);
-
+    console.log(findOrder);
     if (!findOrder) {
       return res.status(404).json({ message: "order not found" });
     }
-
+    console.log(findOrder);
     const product = await Product.updateOne({
       _id: findOrder.productId,
       $inc: { stock: findOrder.quantity },
     });
+    console.log(product);
 
     if (!product) {
       return res.status(404).json({ message: "product not found" });
@@ -135,6 +136,47 @@ export const deleteOrderHandler = async (req: Request, res: Response) => {
       .json({ message: "order deleted successfully", order });
   } catch (error) {
     console.error("Error deleting order:", error);
+    return res.status(500).json({ error: "Internal server error" });
+  }
+};
+
+//////////// get order for admin  ////////////////////////////////////////////////////////////////////////
+
+export const getAllorderHandlerAdmin = async (req: Request, res: Response) => {
+  try {
+    const orders = await Order.find();
+
+    if (!orders || orders.length === 0) {
+      return res.status(404).json({ message: "No orders found" });
+    }
+
+    const formattedOrders = await Promise.all(
+      orders.map(async (order) => {
+        const customer = await User.findById(order.customerId).select(
+          "name email role"
+        );
+        const product = await Product.findById(order.productId).select(
+          "name price categoryName supplierName"
+        );
+
+        return {
+          _id: order._id,
+          quantity: order.quantity,
+          total: order.total,
+          price: order.price,
+          orderDate: order.orderDate,
+          customer: customer || null,
+          product: product || null,
+        };
+      })
+    );
+
+    res.status(200).json({
+      message: "Orders fetched successfully",
+      orders: formattedOrders,
+    });
+  } catch (error) {
+    console.error("Error fetching orders:", error);
     return res.status(500).json({ error: "Internal server error" });
   }
 };

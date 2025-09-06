@@ -81,7 +81,9 @@ const deleteOrderService = async (id: string) => {
 
 export const findOrderByIdService = async (id: string) => {
   try {
-    const order = await Order.findById(id);
+    const order = await Order.findById({
+      _id: id,
+    });
     return order;
   } catch (error) {
     console.error("Error while getting order", error);

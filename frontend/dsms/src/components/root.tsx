@@ -12,7 +12,11 @@ function Root() {
         navigate("/admin/dashboard");
       } else if (user.role === "customer") {
         navigate("/customer/dashboard");
-      } else {
+      } 
+      else if (user.role === "employee") {
+        navigate("/employee/dashboard");
+      } 
+      else {
         navigate("/login");
       }
     } else {

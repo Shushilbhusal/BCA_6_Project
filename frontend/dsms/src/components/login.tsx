@@ -37,6 +37,7 @@ function Login() {
         // Navigate based on role
         if (user.role === "admin") navigate("/admin/dashboard");
         else if (user.role === "customer") navigate("/customer/dashboard");
+         else if (user.role === "employee") navigate("/employee/dashboard");
         else setError("Unknown role");
       }
     // eslint-disable-next-line @typescript-eslint/no-explicit-any

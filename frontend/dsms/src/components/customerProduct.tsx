@@ -203,7 +203,7 @@ function CustomerProduct() {
                 <p className="text-gray-700 mb-4 line-clamp-2">{product.description}</p>
                 
                 <div className="flex justify-between items-center mb-4">
-                  <span className="text-xl font-bold text-blue-600">${product.price.toFixed(2)}</span>
+                  <span className="text-xl font-bold text-blue-600">Rs.{product.price.toFixed(2)}</span>
                   <span className={`px-2 py-1 rounded-full text-xs font-medium ${product.stock > 0 ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
                     {product.stock > 0 ? `In Stock (${product.stock})` : 'Out of Stock'}
                   </span>
@@ -232,8 +232,8 @@ function CustomerProduct() {
 
       {/* Order Modal */}
       {openModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-lg shadow-xl w-full max-w-md">
+        <div className="fixed inset-0 bg-gray-100 bg-opacity-50 flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-lg shadow-xl w-full max-w-md ">
             <div className="flex justify-between items-center p-6 border-b">
               <h2 className="text-xl font-semibold text-gray-800">Place Your Order</h2>
               <button 
@@ -244,10 +244,10 @@ function CustomerProduct() {
               </button>
             </div>
             
-            <form onSubmit={handleSubmit} className="p-6">
+            <form onSubmit={handleSubmit} className="p-6 ">
               <div className="mb-4">
                 <h3 className="text-lg font-medium text-gray-800 mb-2">{orderData.productName}</h3>
-                <p className="text-gray-600">Price: ${orderData.price.toFixed(2)}</p>
+                <p className="text-gray-600">Price: Rs.{orderData.price.toFixed(2)}</p>
                 <p className="text-gray-600">Available: {orderData.stock}</p>
               </div>
               
@@ -269,7 +269,7 @@ function CustomerProduct() {
               
               <div className="mb-6 p-3 bg-blue-50 rounded-md">
                 <p className="text-lg font-semibold text-blue-800">
-                  Total: ${orderData.total.toFixed(2)}
+                  Total: Rs.{orderData.total.toFixed(2)}
                 </p>
               </div>
               

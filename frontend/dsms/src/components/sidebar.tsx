@@ -108,9 +108,61 @@ function Sidebar() {
 
   const [sidebar, setSidebar] = useState(customerItems);
 
+  const employeeItems = [
+    {
+      name: "Dashboard",
+      path: "/employee/dashboard",
+      icon: <FaHome />,
+      isParent: true,
+    },
+    {
+      name: "Products",
+      path: "/employee/dashboard/products",
+      icon: <AiFillProduct />,
+      isParent: false,
+    },
+    {
+      name: "Orders",
+      path: "/employee/dashboard/orders",
+      icon: <FaCartArrowDown />,
+      isParent: false,
+    },
+    {
+      name: "Sales & Billing",
+      path: "/employee/dashboard/sales",
+      icon: <FaCashRegister />,
+      isParent: false,
+    },
+
+    // {
+    //   name: "Users",
+    //   path: "/employee/dashboard/users",
+    //   icon: <FaUsers />,
+    //   isParent: false,
+    // },
+    {
+      name: "Profile",
+      path: "/profile",
+      icon: <CgProfile />,
+      isParent: false,
+    },
+    {
+      name: "Logout",
+      path: "/logout",
+      icon: <RiLogoutCircleRFill />,
+      isParent: false,
+    },
+  ];
+
   useEffect(() => {
     if (user && user.role === "admin") {
       setSidebar(menuItems);
+    }
+    if (user && user.role === "customer") {
+      setSidebar(customerItems);
+    }
+    if (user && user.role === "employee") {
+      setSidebar(employeeItems);
     }
   }, []);
 
