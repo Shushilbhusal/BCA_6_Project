@@ -23,6 +23,8 @@ function App() {
         {/* Public routes */}
         <Route path="/" element={<Root />} />
         <Route path="/login" element={<Login />} />
+        <Route path="/profile" element={<Profile />} />
+
         <Route path="/unauthorized" element={<h1>Unauthorized</h1>} />
         <Route
           path="/logout"
@@ -58,7 +60,6 @@ function App() {
           <Route path="suppliers" element={<Suppliers />} />
           <Route path="orders" element={<Orders />} />
           <Route path="users" element={<Users />} />
-          <Route path="profile" element={<Profile />} />
           <Route path="reports" element={<Reports />} />
           <Route path="sales" element={<Sales />} />
           <Route path="employees" element={<Employee />} />

@@ -20,22 +20,19 @@ export const createOrderHandler = async (req: Request, res: Response) => {
       return;
     }
     const product = await Product.findById(productId);
+    
     if (!product) {
       res.status(404).json({ message: "Product not found" });
       return;
-    } else {
+    }
       // "product" is a Mongoose document returned by findById.
       // We can update its fields directly and call .save()
       // to persist the changes in MongoDB.
       // otherwise we can use updateOne method in Prdouct model
-      product.stock = product.stock - Number(quantity); // decrease stock by quantity
-      await product.save();
-    }
+   
+    
 
-    if (quantity > product.stock) {
-      res.status(400).json({ message: "Product out of stock" });
-      return;
-    }
+    
     const customerId = req.user._id;
     if (!productId || !quantity || !total || !price) {
       res.status(400).json({ message: "All fields are required" });
@@ -49,7 +46,10 @@ export const createOrderHandler = async (req: Request, res: Response) => {
     });
     if (!order) {
       res.status(400).json({ message: "Order not created" });
+
     }
+    product.stock = product.stock - Number(quantity); // decrease stock by quantity
+    await product.save();
     res.status(201).json({ message: "Order created successfully", order });
   } catch (error) {
     console.error("Error creating order:", error);

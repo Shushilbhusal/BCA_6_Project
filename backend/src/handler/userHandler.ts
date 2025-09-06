@@ -5,6 +5,8 @@ import {
   getAllUserService,
   getUserByEmailService,
   getUserByIdService,
+  getUserByIdServiceWithoutPassword,
+  updateUserProfileService,
   updateUserService,
 } from "../model/userService/user.js";
 import { hashPassword } from "../utils/auth.js";
@@ -63,7 +65,7 @@ export const createUserHandler = async (req: Request, res: Response) => {
 export const updateUserHandler = async (req: Request, res: Response) => {
   try {
     const { name, email, phone, address, password, role } = req.body;
-    if (!name || !email || !password) {
+    if (!name || !email || !phone ) {
       console.log(req.body);
       res.status(400).json({ message: "fields are required" });
     }
@@ -126,3 +128,84 @@ export const deleteUserHandler = async (req: Request, res: Response) => {
     return res.status(500).json({ error: "Internal server error" });
   }
 };
+
+
+
+// get user Profile handler
+
+export const getUserProfileHandler =async (req: Request, res: Response) => {
+  try{
+    const id = req.user?._id;
+    console.log("user id is.....", id);
+    if (!id) {
+      console.log("user id is required");
+      return;
+    }
+    const userWithoutPassword = await getUserByIdServiceWithoutPassword(id.toString());
+    console.log("user without password",userWithoutPassword);
+    if (!userWithoutPassword) {
+      return res.status(404).json({ message: "user not found" });
+    }
+    return res.status(200).json({ message: "user fetched successfully", userWithoutPassword });
+  }catch(error){
+    console.error("Error deleting user:", error);
+    return res.status(500).json({ error: "Internal server error" });
+  }
+}
+
+
+// update User profile
+
+export const updateUserProfileHandler = async (req: Request, res: Response) => {
+  try {
+    const { name, email, phone, address, password} = req.body;
+    if (!name || !email || !phone || !address) {
+      console.log(req.body);
+      res.status(400).json({ message: "fields are required" });
+    }
+
+
+
+    const { id } = req.params;
+    if (!id) {
+      console.log("id is required");
+      return;
+    }
+
+    const findUserById = await getUserByIdService(id);
+    if (!findUserById) {
+      console.log("user does not exists");
+      return;
+    }
+    const Password = password || findUserById.password ;
+    if (Password === null || Password === undefined) {
+      console.log("password is required");
+      return;
+    }
+
+    const hashedPassword = await hashPassword(Password);
+    if(!hashedPassword || hashedPassword === null || hashedPassword === undefined){
+      console.log("not hashed password")
+      return null
+    }
+    const updatedUser = await updateUserProfileService(id, {
+      name,
+      email,
+      phone,
+      password: Password,
+      address,
+      role: findUserById.role,
+    });
+
+    if (!updatedUser) {
+      res.status(400).json({ message: "user not updated" });
+    } else {
+      console.log(updatedUser);
+      res
+        .status(201)
+        .json({ message: "user updated successfully", updatedUser });
+    }
+  } catch (error: any) {
+    res.status(500).json({ error });
+  }
+}

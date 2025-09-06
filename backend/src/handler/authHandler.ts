@@ -5,7 +5,9 @@ import { comparePassword, generateToken } from "../utils/auth.js";
 export const loginHandler = async (req: Request, res: Response) => {
   try {
     const { email, password } = req.body;
+    console.log(email, password);
     const user = await User.findOne({ email });
+    console.log(user);
     if (!user) {
       return res.status(401).json({ status: false, message: "not registered" });
     }
@@ -19,7 +21,10 @@ export const loginHandler = async (req: Request, res: Response) => {
     //     .status(401)
     //     .json({ status: false, message: "password must be at least 6 characters long" });
     // }
-    const isMatch = await comparePassword(password, user.password);
+    const Password = password.trim();
+    const userPassword = user.password.trim();
+    const isMatch = await comparePassword(Password, userPassword);
+    console.log("isMathch",isMatch);
     if (!isMatch) {
       return res
         .status(401)

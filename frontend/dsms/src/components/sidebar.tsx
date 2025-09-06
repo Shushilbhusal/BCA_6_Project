@@ -72,7 +72,7 @@ function Sidebar() {
     },
     {
       name: "Profile",
-      path: "/admin/dashboard/profile",
+      path: "/profile",
       icon: <CgProfile />,
       isParent: false,
     },
@@ -91,7 +91,7 @@ function Sidebar() {
       name: "Products",
       path: "/customer/dashboard/products",
       icon: <AiFillProduct />,
-      isParent: false,
+      isParent: true,
     },
     {
       name: "Orders",
@@ -101,7 +101,7 @@ function Sidebar() {
     },
     {
       name: "Profile",
-      path: "/customer/dashboard/profile",
+      path: "/profile",
       icon: <CgProfile />,
       isParent: false,
     },

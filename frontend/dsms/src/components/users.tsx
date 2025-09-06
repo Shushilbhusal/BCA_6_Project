@@ -49,6 +49,7 @@ function Users() {
     } catch (error) {
       console.error("Error while getting Users", error);
       setError("Failed to fetch users");
+    
     } finally {
       setLoading(false);
     }

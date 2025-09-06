@@ -76,3 +76,27 @@ export const deleteUserService = async (id: string) => {
     throw error;
   }
 };
+
+export const getUserByIdServiceWithoutPassword = async (id: string) => {
+  try {
+    const user = await User.findById({ _id: id }).select("-password");
+    return user;
+  } catch (error) {
+    console.log("error while getting user by id", error);
+  }
+}
+
+
+export const updateUserProfileService = async (id: string, user: userType) => {
+  try {
+    const updatedUser = await User.updateOne(
+      {
+        _id: id,
+      },
+      { $set: user }
+    );
+    return updatedUser;
+  } catch (error) {
+    console.log("error while updating user", error);
+  }
+};

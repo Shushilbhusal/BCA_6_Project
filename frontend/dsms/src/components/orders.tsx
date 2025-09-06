@@ -2,7 +2,6 @@ import axios from "axios";
 import React, { useState, useEffect } from "react";
 import { FiSearch, FiBox, FiShoppingCart, FiPackage } from "react-icons/fi";
 import type { ProductType } from "./products";
-import type { UserType } from "./users";
 
 type OrderType = {
   _id: string;
@@ -29,9 +28,10 @@ function Orders() {
         },
       });
       if (response.status === 200) {
+        console.log("orders", response.data.getorders);
         setOrderList(response.data.getorders || []);
         setProducts(response.data.findProducts || []);
-        console.log("response.data.findUsers", response.data.findUsers)
+        console.log("response.data.findUsers", response.data.findUsers);
         setUserName(response.data.findUsers.name)
       }
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
