@@ -8,6 +8,7 @@ import { categoryRouter } from "./router/categoryRouter.js";
 import { supplierRouter } from "./router/supplierRouter.js";
 import { productRouter } from "./router/productRouter.js";
 import { orderRouter } from "./router/orderRouter.js";
+import { dashboardRouter } from "./router/dashboardRouter.js";
 dotenv.config();
 
 const app = express();
@@ -26,6 +27,8 @@ app.use('/category', categoryRouter);
 app.use('/supplier', supplierRouter);
 app.use('/product', productRouter);
 app.use('/order', orderRouter);
+app.use('/api', dashboardRouter);
+
 
 const PORT = process.env.PORT || 3000;
 

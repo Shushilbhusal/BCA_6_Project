@@ -5,9 +5,11 @@ import { Outlet } from 'react-router'
 function Dashboard() {
   return (
     <div className="flex flex-col md:flex-row min-h-screen">
+      
       {/* Sidebar */}
       <div className="w-full md:w-1/4 shadow-md">
         <Sidebar />
+       
       </div>
 
       {/* Main Content */}

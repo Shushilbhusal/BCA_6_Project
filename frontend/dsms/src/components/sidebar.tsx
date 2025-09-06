@@ -58,12 +58,7 @@ function Sidebar() {
       icon: <FaChartBar />,
       isParent: false,
     },
-    {
-      name: "Employees",
-      path: "/admin/dashboard/employees",
-      icon: <MdPeople />,
-      isParent: false,
-    },
+    
     {
       name: "Users",
       path: "/admin/dashboard/users",

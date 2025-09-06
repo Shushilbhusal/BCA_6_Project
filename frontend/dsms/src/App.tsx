@@ -12,9 +12,9 @@ import Users from "./components/users";
 import Profile from "./components/profile";
 import Reports from "./components/reports";
 import Sales from "./components/sales";
-import Employee from "./components/employee";
 import Logout from "./components/logout";
 import CustomerProduct from "./components/customerProduct";
+import SummaryDashboard from "./components/summaryDashboard";
 
 function App() {
   return (
@@ -51,10 +51,13 @@ function App() {
           path="/admin/dashboard"
           element={
             <ProtectedRoutes requiredRole={["admin"]}>
+
               <Dashboard />
             </ProtectedRoutes>
           }
         >
+          <Route index element={<SummaryDashboard />} />
+
           <Route path="categories" element={<Categories />} />
           <Route path="products" element={<Products />} />
           <Route path="suppliers" element={<Suppliers />} />
@@ -62,7 +65,6 @@ function App() {
           <Route path="users" element={<Users />} />
           <Route path="reports" element={<Reports />} />
           <Route path="sales" element={<Sales />} />
-          <Route path="employees" element={<Employee />} />
         </Route>
 
         {/* -----------------------------Admin with Sidebar and dashboard section completed-------------------*/}
