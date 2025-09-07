@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { createOrderHandler, deleteOrderHandler, getAllorderHandler, getAllorderHandlerAdmin } from "../handler/orderHandler.js";
+import { changeStatusHandler, createOrderHandler, deleteOrderHandler, getAllorderHandler, getAllorderHandlerAdmin } from "../handler/orderHandler.js";
 import { authMiddleware } from "../middleware/authMiddleware.js";
 
 const orderRouter = Router();
@@ -10,7 +10,8 @@ orderRouter.delete('/delete/:id',authMiddleware, deleteOrderHandler);
 
 orderRouter.get('/get/allorders', getAllorderHandlerAdmin);
 
-// orderRouter.put('/update', updateOrderHandler);
+
+orderRouter.put('/update/status/:id', changeStatusHandler);
 // orderRouter.delete('/delete', deleteOrderHandler);
 
 export { orderRouter}

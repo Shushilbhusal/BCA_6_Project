@@ -1,5 +1,5 @@
 import type { Types } from "mongoose";
-import { Order } from "./orderModel.js";
+import { Order, orderStatus } from "./orderModel.js";
 
 type orderType = {
   customerId: Types.ObjectId;
@@ -7,6 +7,7 @@ type orderType = {
   quantity: number;
   total: number;
   price: number;
+  status?: orderStatus;
 };
 
 export const createOrderService = async (order: orderType) => {
@@ -64,20 +65,19 @@ export const deleteorderService = async (id: string) => {
   }
 };
 
+// get order by status
 
-// delete order
-
-const deleteOrderService = async (id: string) => {
+export const getOrderByStatusService = async (status: orderStatus) => {
   try {
-    const deleteorder = await Order.deleteOne({ _id: id });
-    return deleteorder;
+    const orderByStatus = await Order.find({ status: status });
+    return orderByStatus;
   } catch (error) {
-    console.error("Error while getting order", error);
+    console.error("Error while getting order by status", error);
     throw error;
   }
 };
 
-// find order by id 
+// find order by id
 
 export const findOrderByIdService = async (id: string) => {
   try {

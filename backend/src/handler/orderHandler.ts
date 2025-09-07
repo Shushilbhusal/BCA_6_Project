@@ -115,6 +115,11 @@ export const deleteOrderHandler = async (req: Request, res: Response) => {
     if (!findOrder) {
       return res.status(404).json({ message: "order not found" });
     }
+    if (findOrder.status === "confirmed" || findOrder.status === "delivered") {
+      return res
+        .status(400)
+        .json({ message: "order confirmed or delivered can't be deleted" });
+    }
     console.log(findOrder);
     const product = await Product.updateOne({
       _id: findOrder.productId,
@@ -167,6 +172,7 @@ export const getAllorderHandlerAdmin = async (req: Request, res: Response) => {
           orderDate: order.orderDate,
           customer: customer || null,
           product: product || null,
+          status: order.status,
         };
       })
     );
@@ -177,6 +183,47 @@ export const getAllorderHandlerAdmin = async (req: Request, res: Response) => {
     });
   } catch (error) {
     console.error("Error fetching orders:", error);
+    return res.status(500).json({ error: "Internal server error" });
+  }
+};
+
+// changeStatus of order by admin
+
+export const changeStatusHandler = async (req: Request, res: Response) => {
+  try {
+    console.log("...............", req.body);
+
+    const { status } = req.body;  
+    const { id } = req.params;
+
+    if (!status) {
+      return res.status(400).json({ message: "Status is required" });
+    }
+
+    const newStatus = status.toLowerCase();
+    console.log(id, newStatus);
+
+    const order = await Order.findById(id);
+    if (!order) {
+      return res.status(404).json({ message: "Order not found" });
+    }
+
+    if (order.status === "delivered") {
+      return res.status(400).json({ message: "Order already delivered can't be updated" });
+    }
+    if (order.status === "cancelled") {
+      return res.status(400).json({ message: "Order cancelled can't be updated" });
+    }
+    if (order.status === "confirmed" && newStatus === "cancelled") {
+      return res.status(400).json({ message: "Order confirmed can't be cancelled" });
+    }
+
+    order.status = newStatus;
+    await order.save();
+
+    return res.status(200).json({ message: "Order status updated successfully" });
+  } catch (error) {
+    console.error("Error updating order status:", error);
     return res.status(500).json({ error: "Internal server error" });
   }
 };

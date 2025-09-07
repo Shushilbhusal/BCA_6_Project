@@ -10,15 +10,15 @@ type OrderType = {
   total: number;
   price: number;
   orderDate?: string;
+  status: string;
 };
-
 function Orders() {
   const [loading, setLoading] = useState(false);
   const [orderList, setOrderList] = useState<OrderType[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [products, setProducts] = useState<ProductType[]>([]);
   const [userName, setUserName] = useState("");
-  
+
   const fetchOrders = async () => {
     try {
       setLoading(true);
@@ -32,7 +32,7 @@ function Orders() {
         setOrderList(response.data.getorders || []);
         setProducts(response.data.findProducts || []);
         console.log("response.data.findUsers", response.data.findUsers);
-        setUserName(response.data.findUsers.name)
+        setUserName(response.data.findUsers.name);
       }
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
@@ -64,13 +64,15 @@ function Orders() {
   const handleDeleteOrder = async (id: string) => {
     if (window.confirm("Are you sure you want to delete this order?")) {
       try {
-        await axios.delete(`http://localhost:5000/order/delete/${id}`,
-          
-           {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        });
+        await axios.delete(
+          `http://localhost:5000/order/delete/${id}`,
+
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+          }
+        );
         alert("Order deleted successfully");
         fetchOrders();
       } catch (error) {
@@ -90,7 +92,7 @@ function Orders() {
     <div className="container mx-auto px-4 py-8">
       <h1 className="text-3xl font-bold text-blue-700 mb-6">Order History</h1>
 
-     <h1 className="text-xl font-semibold text-gray-800">
+      <h1 className="text-xl font-semibold text-gray-800">
         welcome, <span className="text-blue-600">{userName}</span>
       </h1>
 
@@ -132,6 +134,7 @@ function Orders() {
               <p className="text-xl font-bold text-green-700">
                 Rs.
                 {filteredOrders
+                  .filter((order) => order.status === "delivered")
                   .reduce((sum, order) => sum + order.total, 0)
                   .toFixed(2)}
               </p>
@@ -158,14 +161,19 @@ function Orders() {
               <p className="text-sm text-gray-600">Average Order</p>
               <p className="text-xl font-bold text-yellow-700">
                 Rs.
-                {filteredOrders.length > 0
-                  ? (
-                      filteredOrders.reduce(
-                        (sum, order) => sum + order.total,
-                        0
-                      ) / filteredOrders.length
-                    ).toFixed(2)
-                  : "0.00"}
+                {(() => {
+                  const deliveredOrders = filteredOrders.filter(
+                    (order) => order.status.toLowerCase() === "delivered"
+                  );
+                  const avg =
+                    deliveredOrders.length > 0
+                      ? deliveredOrders.reduce(
+                          (sum, order) => sum + order.total,
+                          0
+                        ) / deliveredOrders.length
+                      : 0;
+                  return avg.toFixed(2);
+                })()}
               </p>
             </div>
           </div>
@@ -206,15 +214,23 @@ function Orders() {
                       scope="col"
                       className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
                     >
-                      Total
+                      Total Price
                     </th>
+
+                    <th
+                      scope="col"
+                      className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                    >
+                      Status
+                    </th>
+
                     <th
                       scope="col"
                       className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
                     >
                       Date
                     </th>
-                     <th
+                    <th
                       scope="col"
                       className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
                     >
@@ -248,11 +264,32 @@ function Orders() {
                             Rs.{order.price.toFixed(2)}
                           </div>
                         </td>
+
                         <td className="px-6 py-4 whitespace-nowrap">
                           <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
                             Rs.{order.total.toFixed(2)}
                           </span>
                         </td>
+
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <span
+                            className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full
+                             ${
+                               order.status === "pending"
+                                 ? "bg-yellow-100 text-yellow-800"
+                                 : order.status === "confirmed"
+                                 ? "bg-green-100 text-green-800"
+                                 : order.status === "cancelled"
+                                 ? "bg-red-100 text-red-800"
+                                 : order.status === "delivered"
+                                 ? "bg-blue-100 text-blue-800"
+                                 : "bg-gray-100 text-gray-800"
+                             }`}
+                          >
+                            {order.status}
+                          </span>
+                        </td>
+
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                           {formatDate(order.orderDate)}
                         </td>
@@ -262,7 +299,7 @@ function Orders() {
                               onClick={() => handleDeleteOrder(order._id)}
                               className="text-red-600 hover:text-red-800"
                             >
-                              Delete
+                              Cancel
                             </button>
                           </div>
                         </td>
