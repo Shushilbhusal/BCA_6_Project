@@ -20,7 +20,6 @@ export type ProductType = {
   updatedAt: string;
 };
 
-
 const Products = () => {
   // Form state
   const [productForm, setProductForm] = useState({
@@ -122,10 +121,7 @@ const Products = () => {
     } else {
       setProductForm((prev) => ({
         ...prev,
-        [name]:
-          name === "price" || name === "stock"
-            ? Number(value)
-            : value,
+        [name]: name === "price" || name === "stock" ? Number(value) : value,
       }));
     }
   };
@@ -161,7 +157,7 @@ const Products = () => {
       formData.append("stock", String(productForm.stock));
       formData.append("categoryName", productForm.categoryName);
       formData.append("supplierName", productForm.supplierName);
-     
+
       if (productForm.image) {
         formData.append("image", productForm.image);
       }
@@ -176,7 +172,6 @@ const Products = () => {
       );
 
       if (response.status === 201) {
-        
         alert("Product added successfully");
         clearForm();
         fetchProducts();
@@ -272,8 +267,6 @@ const Products = () => {
       .toLowerCase()
       .includes((searchTerm ?? "").toLowerCase())
   );
-
-
 
   if (loading && productsList.length === 0) {
     return (
@@ -397,6 +390,19 @@ const Products = () => {
                           required
                         />
                       </div>
+                      <div>
+                        <label className="block text-xs font-medium text-gray-600 mb-1 uppercase tracking-wide">
+                          Total Price*
+                        </label>
+                        <input
+                          type="number"
+                          name="totalCost"
+                          placeholder="0"
+                          value={productForm.stock * productForm.price || ""}
+                          readOnly
+                          className="w-full px-3 py-2 text-sm border border-gray-200 rounded-md bg-gray-100 cursor-not-allowed focus:outline-none"
+                        />
+                      </div>
                     </div>
 
                     <div className="grid grid-cols-2 gap-3">
@@ -449,9 +455,7 @@ const Products = () => {
                         <label className="flex flex-col items-center justify-center w-20 h-20 border border-dashed border-gray-300 rounded-md cursor-pointer hover:border-indigo-400 transition-colors overflow-hidden">
                           {productForm.image ? (
                             <img
-                              src={URL.createObjectURL(
-                                productForm.image
-                              )}
+                              src={URL.createObjectURL(productForm.image)}
                               alt="Preview"
                               className="w-full h-full object-cover"
                             />
@@ -587,6 +591,9 @@ const Products = () => {
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Stock
                   </th>
+                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Total Price
+                  </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Category
                   </th>
@@ -607,8 +614,8 @@ const Products = () => {
                           {product.image ? (
                             <img
                               className="h-10 w-10 rounded-md object-cover"
-                               src={product.image}
-                               alt={product.name}
+                              src={product.image}
+                              alt={product.name}
                             />
                           ) : (
                             <div className="h-10 w-10 rounded-md bg-gray-200 flex items-center justify-center">
@@ -645,10 +652,16 @@ const Products = () => {
                       </span>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                     <div className="text-sm text-gray-900  ">
+                        Rs.{Number(product.stock * product.price).toFixed(2)}
+                      </div>
+                     </td> 
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                       {product.categoryName}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      {product.supplierName}                    </td>
+                      {product.supplierName}{" "}
+                    </td>
                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                       <div className="flex justify-end space-x-2">
                         <button

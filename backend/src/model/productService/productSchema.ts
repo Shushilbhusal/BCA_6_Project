@@ -26,6 +26,9 @@ const productSchema = new mongoose.Schema({
     required: true,
     min: 0
   },
+  totalCost: {
+    type: Number,
+  },
   image: {
     type: String,
     trim: true

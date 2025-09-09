@@ -64,13 +64,14 @@ export const addProductHandler = async (req: Request, res: Response) => {
       categoryName,
       supplierName,
     } = req.body;
-
+    console.log("request body...............", req.body);
     // Validate input
     if (
       !name ||
       !description ||
       !price ||
       !stock ||
+     
       !categoryName ||
       !supplierName
     ) {
@@ -101,6 +102,7 @@ export const addProductHandler = async (req: Request, res: Response) => {
     //  Convert numeric fields
     const priceNumber = Number(price);
     const stockNumber = Number(stock);
+    const totalPriceNumber = Number(price) * Number(stock);
 
     if (isNaN(priceNumber) || isNaN(stockNumber)) {
       return res
@@ -125,6 +127,7 @@ export const addProductHandler = async (req: Request, res: Response) => {
       description,
       price: priceNumber,
       stock: stockNumber,
+      totalCost: totalPriceNumber,
       categoryId: findcategoryName._id, // ensure this exists
       supplierId: findSupplier._id, // ensure this exists
       categoryName: findcategoryName.categoryName ?? "",
@@ -226,6 +229,7 @@ export const updateProductHandler = async (req: Request, res: Response) => {
       description,
       price: Number(price),
       stock: Number(stock),
+      totalCost: Number(price) * Number(stock),
       categoryId: findcategoryName._id,
       supplierId: findSupplier._id,
       image,

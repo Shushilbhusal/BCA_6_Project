@@ -9,6 +9,7 @@ import { supplierRouter } from "./router/supplierRouter.js";
 import { productRouter } from "./router/productRouter.js";
 import { orderRouter } from "./router/orderRouter.js";
 import { dashboardRouter } from "./router/dashboardRouter.js";
+import { expenseTrackerRouter } from "./router/expenseTracker.js";
 dotenv.config();
 
 const app = express();
@@ -28,6 +29,7 @@ app.use('/supplier', supplierRouter);
 app.use('/product', productRouter);
 app.use('/order', orderRouter);
 app.use('/api', dashboardRouter);
+app.use('/expenseTracker', expenseTrackerRouter);
 
 
 const PORT = process.env.PORT || 3000;

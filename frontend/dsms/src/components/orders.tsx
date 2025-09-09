@@ -261,7 +261,7 @@ function Orders() {
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
                           <div className="text-sm text-gray-900">
-                            Rs.{order.price.toFixed(2)}
+                            Rs.{(order.price * 1.05).toFixed(2)}
                           </div>
                         </td>
 

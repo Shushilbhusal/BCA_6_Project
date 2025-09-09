@@ -45,7 +45,7 @@ function Sidebar() {
       isParent: false,
     },
     {
-      name: "Sales & Billing",
+      name: "Expense And Revenue Tracker",
       path: "/admin/dashboard/sales",
       icon: <FaCashRegister />,
       isParent: false,
@@ -127,12 +127,12 @@ function Sidebar() {
       icon: <FaCartArrowDown />,
       isParent: false,
     },
-    {
-      name: "Sales & Billing",
-      path: "/employee/dashboard/sales",
-      icon: <FaCashRegister />,
-      isParent: false,
-    },
+    // {
+    //   name: "Sales & Billing",
+    //   path: "/employee/dashboard/sales",
+    //   icon: <FaCashRegister />,
+    //   isParent: false,
+    // },
 
     // {
     //   name: "Users",

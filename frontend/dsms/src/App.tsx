@@ -10,7 +10,7 @@ import Suppliers from "./components/suppliers";
 import Orders from "./components/orders";
 import Users from "./components/users";
 import Profile from "./components/profile";
-import Sales from "./components/sales";
+import Sales from "./components/ExpenseTrack";
 import Logout from "./components/logout";
 import CustomerProduct from "./components/customerProduct";
 import SummaryDashboard from "./components/summaryDashboard";
@@ -89,14 +89,14 @@ function App() {
               </ProtectedRoutes>
             }
           />
-          <Route
+          {/* <Route
             path="sales"
             element={
               <ProtectedRoutes requiredRole={["admin", "employee"]}>
                 <Sales />
               </ProtectedRoutes>
             }
-          />
+          /> */}
           <Route path="orders" element={<OrderAdmin />} />
         </Route>
       </Routes>

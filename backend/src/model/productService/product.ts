@@ -9,6 +9,7 @@ export type ProductType = {
     description: string;
     image: string; // better to store URL/path
     stock: number;
+    totalCost: number;
     categoryName?: string;
     supplierName?: string;
 };
@@ -20,6 +21,7 @@ export const createProductService = async (product: ProductType) => {
             name: product.name,
             supplierId: product.supplierId,
             price: product.price,
+            totalPrice: product.totalCost,
             categoryId: product.categoryId,
             description: product.description,
             image: product.image,

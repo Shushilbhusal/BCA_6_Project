@@ -36,6 +36,7 @@ function EmployeeSummaryDashboard() {
   });
 
   const [loading, setLoading] = useState(false);
+  const [name, setName] = useState("");
 
   const fetchDashboardData = async () => {
     try {
@@ -48,6 +49,7 @@ function EmployeeSummaryDashboard() {
 
       setDashboardData(response.data.dashboardData);
       setLoading(false);
+      setName(response.data.userName);
     } catch (error) {
       console.error("Error fetching dashboard data:", error);
       setLoading(false);
@@ -70,7 +72,7 @@ function EmployeeSummaryDashboard() {
     <div className="min-h-screen bg-gray-50 p-4 md:p-6">
       {/* Header */}
       <header className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-800">Admin Dashboard</h1>
+        <h1 className="text-3xl font-bold text-gray-800">Employee Dashboard, welcome {name}</h1>
         <p className="text-gray-600">Overview of your store performance</p>
       </header>
 

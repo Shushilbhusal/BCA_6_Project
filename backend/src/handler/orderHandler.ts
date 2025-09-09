@@ -121,10 +121,11 @@ export const deleteOrderHandler = async (req: Request, res: Response) => {
         .json({ message: "order confirmed or delivered can't be deleted" });
     }
     console.log(findOrder);
-    const product = await Product.updateOne({
-      _id: findOrder.productId,
-      $inc: { stock: findOrder.quantity },
-    });
+   const product = await Product.updateOne(
+  { _id: findOrder.productId },   // filter
+  { $inc: { stock: findOrder.quantity } } // update
+);
+
     console.log(product);
 
     if (!product) {
