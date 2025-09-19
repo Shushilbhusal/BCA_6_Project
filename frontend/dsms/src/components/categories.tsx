@@ -10,6 +10,7 @@ export type Category = {
   imageUrl: string;
 };
 
+
 function Categories() {
   const [categoryName, setCategoryName] = useState("");
   const [categoryDescription, setCategoryDescription] = useState("");

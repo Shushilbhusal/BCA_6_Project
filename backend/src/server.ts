@@ -2,7 +2,7 @@ import express from "express";
 import cors from 'cors';
 import connectDB from "./db/connection.js";
 import dotenv from 'dotenv';
-import { userRouter } from "./router/userRouter.js";
+import { userRouter } from "./router/userRouter.js"; 
 
 import { categoryRouter } from "./router/categoryRouter.js";
 import { supplierRouter } from "./router/supplierRouter.js";
@@ -10,6 +10,7 @@ import { productRouter } from "./router/productRouter.js";
 import { orderRouter } from "./router/orderRouter.js";
 import { dashboardRouter } from "./router/dashboardRouter.js";
 import { expenseTrackerRouter } from "./router/expenseTracker.js";
+import mongoose from "mongoose";
 dotenv.config();
 
 const app = express();
@@ -17,9 +18,11 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 app.use(cors({
-  origin: 'http://localhost:5173', // frontend URL
+  origin: ['http://localhost:5173'], // frontend URL
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
   credentials: true
 }));
+
 
 
 
