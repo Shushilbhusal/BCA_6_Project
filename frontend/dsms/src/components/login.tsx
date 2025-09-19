@@ -25,7 +25,7 @@ function Login() {
 
     try {
       const response = await axios.post<LoginResponse>(
-        "http://localhost:5000/user/auth/login",
+        "https://bca-6-project-2.onrender.com/user/auth/login",
         { email, password }
       );
 
